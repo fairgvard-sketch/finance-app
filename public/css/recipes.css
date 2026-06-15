@@ -1,0 +1,140 @@
+/* ============================================================
+   RECIPES — экран «Рецепты». Журнальные карточки с фото,
+   бейдж «можно приготовить» из Запасов, детальный вид.
+   ============================================================ */
+
+/* ── Поиск ── */
+.rc-search { position: relative; margin-bottom: 4px; }
+.rc-search input {
+  width: 100%; border: 1.5px solid var(--line); border-radius: var(--r-pill);
+  padding: 12px 16px 12px 44px; font-family: var(--font-body); font-size: 14.5px;
+  outline: none; background: var(--surface); color: var(--ink);
+}
+.rc-search input:focus { border-color: var(--home); }
+.rc-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; stroke: var(--ink-3); fill: none; stroke-width: 2; }
+
+/* ── Фильтр категорий ── */
+.rc-cats { display: flex; gap: 8px; overflow-x: auto; padding: 2px; margin: 0 -2px 2px; }
+.rc-cat {
+  flex: 0 0 auto; display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px 8px 8px; border-radius: var(--r-pill);
+  background: var(--surface); border: 1.5px solid var(--line);
+  font-size: 13px; font-weight: 600; color: var(--ink-2); cursor: pointer; white-space: nowrap;
+  transition: all .2s cubic-bezier(.34,1.4,.64,1);
+}
+.rc-cat .dot { width: 24px; height: 24px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rc-cat.on { color: #fff; border-color: transparent; transform: scale(1.03); }
+.rc-cat.on .dot { background: rgba(255,255,255,.22) !important; }
+.rc-cat:active { transform: scale(.95); }
+
+/* ── Журнальная карточка ── */
+.rc-card {
+  position: relative; overflow: hidden; cursor: pointer;
+  border-radius: var(--r-xl); margin-bottom: 14px;
+  box-shadow: var(--sh-md); background: var(--surface);
+  border: 1px solid var(--line-soft);
+  transition: transform .16s, box-shadow .16s;
+}
+.rc-card:active { transform: scale(.985); box-shadow: var(--sh-lg); }
+.rc-card__photo {
+  position: relative; height: 168px; overflow: hidden;
+  background: linear-gradient(150deg, var(--c1, #d99a2b) 0%, var(--c2, #b5613e) 100%);
+}
+.rc-card__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* плейсхолдер без фото — крупная duotone-иконка по центру */
+.rc-card__ph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+}
+.rc-card__ph svg { width: 64px; height: 64px; opacity: .9; }
+.rc-card__ph svg [opacity] { fill: #fff !important; opacity: .35; }
+.rc-card__ph svg path, .rc-card__ph svg circle, .rc-card__ph svg rect { stroke: #fff !important; }
+/* затемнение снизу под текст */
+.rc-card__grad {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 92px;
+  background: linear-gradient(transparent, rgba(20,15,8,.72));
+}
+.rc-card__fav {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(0,0,0,.28); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; font-size: 17px;
+  transition: transform .14s;
+}
+.rc-card__fav:active { transform: scale(.85); }
+.rc-card__cook {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  border-radius: var(--r-pill); padding: 5px 11px; font-size: 11.5px; font-weight: 800;
+  display: flex; align-items: center; gap: 5px; backdrop-filter: blur(6px);
+}
+.rc-card__cook.ok   { background: rgba(26,122,71,.92); color: #fff; }
+.rc-card__cook.miss { background: rgba(0,0,0,.34); color: #fff; }
+.rc-card__title {
+  position: absolute; left: 16px; right: 16px; bottom: 12px; z-index: 2; color: #fff;
+}
+.rc-card__name { font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; line-height: 1.15; }
+.rc-card__meta { display: flex; align-items: center; gap: 12px; margin-top: 5px; font-size: 12.5px; color: rgba(255,255,255,.9); }
+.rc-card__meta span { display: flex; align-items: center; gap: 4px; }
+
+/* ── Пусто ── */
+.rc-empty { text-align: center; padding: 44px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.rc-empty__ico { width: 80px; height: 80px; border-radius: 24px; background: var(--home-soft);
+  display: flex; align-items: center; justify-content: center; }
+.rc-empty h3 { font-family: var(--font-display); font-weight: 700; font-size: 19px; color: var(--ink); }
+.rc-empty p { font-size: 14px; color: var(--ink-2); max-width: 270px; line-height: 1.5; }
+
+/* ── ДЕТАЛЬНЫЙ ВИД (полноэкранный sheet) ── */
+.rc-detail { animation: fadeUp .3s cubic-bezier(.34,1.2,.64,1) both; }
+.rc-detail__hero { position: relative; height: 230px; border-radius: var(--r-xl); overflow: hidden;
+  background: linear-gradient(150deg, var(--c1, #d99a2b) 0%, var(--c2, #b5613e) 100%); box-shadow: var(--sh-md); }
+.rc-detail__hero img { width: 100%; height: 100%; object-fit: cover; }
+.rc-detail__back {
+  position: absolute; top: 14px; left: 14px; z-index: 3;
+  width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(0,0,0,.32); backdrop-filter: blur(6px); color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rc-detail__name { font-family: var(--font-display); font-weight: 700; font-size: 24px; color: var(--ink);
+  letter-spacing: -.02em; margin: 16px 2px 4px; }
+.rc-detail__meta { display: flex; gap: 16px; margin: 0 2px 16px; font-size: 13px; color: var(--ink-2); }
+.rc-detail__meta b { font-family: var(--font-display); color: var(--ink); }
+
+.rc-cook-bar {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--r-lg);
+  margin-bottom: 16px;
+}
+.rc-cook-bar.ok   { background: var(--pos-soft); }
+.rc-cook-bar.miss { background: var(--warn-soft); }
+.rc-cook-bar__txt { flex: 1; font-size: 13.5px; font-weight: 600; }
+.rc-cook-bar.ok   .rc-cook-bar__txt { color: #166b3e; }
+.rc-cook-bar.miss .rc-cook-bar__txt { color: #9a6a12; }
+.rc-cook-bar__btn { border: none; cursor: pointer; border-radius: var(--r-pill); padding: 9px 14px;
+  background: var(--home); color: #fff; font-family: var(--font-body); font-weight: 700; font-size: 12.5px;
+  box-shadow: var(--sh-sm); transition: transform .14s; white-space: nowrap; }
+.rc-cook-bar__btn:active { transform: scale(.93); }
+
+.rc-sec-title { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--ink); margin: 18px 2px 10px; }
+.rc-ing { display: flex; align-items: center; gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; }
+.rc-ing:last-child { border-bottom: none; }
+.rc-ing__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.rc-ing__dot.have { background: var(--pos); }
+.rc-ing__dot.miss { background: var(--warn); }
+.rc-ing__name { flex: 1; color: var(--ink); }
+.rc-ing__qty { color: var(--ink-3); font-size: 13px; }
+.rc-ing.is-miss .rc-ing__name { color: var(--ink-2); }
+
+.rc-step { display: flex; gap: 12px; padding: 10px 0; }
+.rc-step__n { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; background: var(--home);
+  color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; }
+.rc-step__txt { flex: 1; font-size: 14.5px; color: var(--ink); line-height: 1.5; padding-top: 2px; }
+
+/* ── Форма ингредиентов в sheet ── */
+.rc-ing-edit { display: flex; gap: 8px; margin-bottom: 8px; }
+.rc-ing-edit input.name { flex: 1; }
+.rc-ing-edit input.qty { width: 84px; }
+.rc-ing-edit button { width: 40px; flex: 0 0 40px; border: none; border-radius: var(--r-md);
+  background: var(--neg-soft); color: var(--neg); cursor: pointer; font-size: 18px; }
+.rc-add-line { border: 1.5px dashed var(--line); background: transparent; color: var(--home);
+  width: 100%; padding: 11px; border-radius: var(--r-md); cursor: pointer; font-family: var(--font-body);
+  font-weight: 600; font-size: 13px; margin-top: 4px; }

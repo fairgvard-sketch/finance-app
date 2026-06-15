@@ -135,7 +135,38 @@
     cart: { color: "#457b9d", svg:  // покупки (дублирует существующий стиль)
       `<g opacity=".2"><path d="M6 6h15l-1.8 8.4a2 2 0 0 1-2 1.6H9.2a2 2 0 0 1-2-1.6L5.2 4H2" fill="C"/></g>`+
       `<path d="M5.2 4H2M6 6h15l-1.8 8.4a2 2 0 0 1-2 1.6H9.2a2 2 0 0 1-2-1.6L5.5 6" stroke="C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`+
-      `<circle cx="9.5" cy="20" r="1.6" fill="C"/><circle cx="17" cy="20" r="1.6" fill="C"/>` }
+      `<circle cx="9.5" cy="20" r="1.6" fill="C"/><circle cx="17" cy="20" r="1.6" fill="C"/>` },
+
+    /* ── Категории рецептов ── */
+    breakfast: { color: "#d99a2b", svg:  // яичница / завтрак
+      `<g opacity=".2"><circle cx="12" cy="13" r="8" fill="C"/></g>`+
+      `<path d="M5 13a7 7 0 0 1 13-3.5A4 4 0 1 1 19 16a7 7 0 0 1-14-3z" stroke="C" stroke-width="1.6" stroke-linejoin="round" fill="none"/>`+
+      `<circle cx="11" cy="12.5" r="2.6" stroke="C" stroke-width="1.6" fill="none"/>` },
+
+    lunch: { color: "#c47a3e", svg:  // тарелка с приборами / обед
+      `<g opacity=".2"><circle cx="12" cy="12" r="6.5" fill="C"/></g>`+
+      `<circle cx="12" cy="12" r="6.5" stroke="C" stroke-width="1.6" fill="none"/>`+
+      `<path d="M4 4v5a1.5 1.5 0 0 0 3 0V4M5.5 4v16M20 4c-1.5 0-2.5 1.5-2.5 4s1 3.5 2.5 3.5V20" stroke="C" stroke-width="1.5" stroke-linecap="round" fill="none"/>` },
+
+    dinner: { color: "#b5613e", svg:  // крышка-клош / ужин
+      `<g opacity=".2"><path d="M3.5 17a8.5 8.5 0 0 1 17 0z" fill="C"/></g>`+
+      `<path d="M3.5 17a8.5 8.5 0 0 1 17 0zM2 17h20M12 8.5V6.5" stroke="C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`+
+      `<circle cx="12" cy="5.5" r="1" fill="C"/>` },
+
+    dessert: { color: "#c98ab0", svg:  // кекс / десерт
+      `<g opacity=".2"><path d="M6 12h12l-1 8H7z" fill="C"/></g>`+
+      `<path d="M6 12h12l-1 8H7zM9 20v-8M12 20v-8M15 20v-8" stroke="C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`+
+      `<path d="M7 12a3 3 0 0 1 .3-4A3.5 3.5 0 0 1 12 5a3.5 3.5 0 0 1 4.7 3 3 3 0 0 1 .3 4" stroke="C" stroke-width="1.6" stroke-linejoin="round" fill="none"/>` },
+
+    drinks: { color: "#4f94c4", svg:  // стакан / напитки
+      `<g opacity=".2"><path d="M7 4h10l-1.2 16H8.2z" fill="C"/></g>`+
+      `<path d="M7 4h10l-1.2 16H8.2zM6.6 9h10.8" stroke="C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`+
+      `<path d="M13 5.5l-1.5 3" stroke="C" stroke-width="1.4" stroke-linecap="round" fill="none"/>` },
+
+    recipe: { color: "#d99a2b", svg:  // общий — поварёшка
+      `<g opacity=".2"><circle cx="9" cy="8" r="5" fill="C"/></g>`+
+      `<circle cx="9" cy="8" r="5" stroke="C" stroke-width="1.6" fill="none"/>`+
+      `<path d="M12.5 11.5 19 18a1.8 1.8 0 0 1-2.5 2.5L10 14" stroke="C" stroke-width="1.6" stroke-linecap="round" fill="none"/>` }
   };
 
   // duoIcon(key, size, colorOverride?) — colorOverride перекрашивает иконку
