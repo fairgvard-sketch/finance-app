@@ -739,7 +739,9 @@ window.signOutUser = function() {
 window.saveToFirebase = function(txs, subs, goals, budgets, recurrings, ts) {
   const uid = auth.currentUser?.uid;
   if(!uid) return;
-  db.ref("users/"+uid).set({txs, subs, goals, budgets, recur: recurrings||[], lastSaved: ts||Date.now()})
+  // ВАЖНО: update (не set!) — set перезаписал бы весь узел users/{uid}
+  // и стёр бы households-данные (users/{uid}/household, householdId).
+  db.ref("users/"+uid).update({txs, subs, goals, budgets, recur: recurrings||[], lastSaved: ts||Date.now()})
     .catch(e=>console.log("Save error:", e));
 };
 

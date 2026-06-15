@@ -24,10 +24,16 @@
   }
 
   // Вызывается после авторизации (передаём firebase user и db).
-  // Устойчиво к security-rules: пробуем общий путь household/, при
-  // отказе откатываемся на users/{uid}/household (его правила уже
-  // разрешают). Так сохранение работает всегда, а на общий путь
-  // легко перейти, когда правила откроют household/.
+  //
+  // ВАЖНО: текущие security-rules Firebase разрешают только
+  // users/{uid}, а household/ блокируют (PERMISSION_DENIED). Поэтому
+  // по умолчанию работаем по личному пути users/{uid}/household —
+  // он гарантированно пишется и переживает перезагрузку.
+  //
+  // Когда правила household/ будут задеплоены (database.rules.json),
+  // включится общий режим: достаточно поставить флаг
+  //   localStorage.setItem("hub.sharedHousehold","1")
+  // — тогда данные станут общими для пары.
   async function initHousehold(user, db) {
     if (!user || !db) return;
     const me = {
@@ -36,42 +42,39 @@
       email: user.email || ""
     };
 
+    const tryShared = localStorage.getItem("hub.sharedHousehold") === "1";
     let ref = null;
 
-    // 1) Пытаемся работать через общий household/{hid}
-    try {
-      const uref = db.ref("users/" + user.uid + "/householdId");
-      const snap = await uref.get();
-      let hid = snap.exists() ? snap.val() : null;
-
-      if (!hid) {
-        hid = genId();
-        // пробная запись — упадёт, если правила запрещают household/
-        await db.ref("household/" + hid).set({
-          createdBy: user.uid, createdAt: Date.now(),
-          members: { [user.uid]: me }
-        });
-        await uref.set(hid);
-      } else {
-        // убеждаемся, что доступ к узлу есть (read проверит правила)
-        await db.ref("household/" + hid).child("members").get();
-      }
-      Household.id = hid;
-      ref = db.ref("household/" + hid);
-      Household.mode = "shared";
-    } catch (e) {
-      // 2) Fallback: личный узел users/{uid}/household
-      console.warn("[household] shared path unavailable, falling back to users/{uid}/household:", e && e.code || e);
+    if (tryShared) {
+      // Общий household/{hid} — только если правила уже открыты
       try {
-        ref = db.ref("users/" + user.uid + "/household");
-        // гарантируем, что есть запись об участнике
-        await ref.child("members/" + user.uid).set(me).catch(()=>{});
-        Household.id = "self:" + user.uid;
-        Household.mode = "personal";
-      } catch (e2) {
-        console.error("[household] init failed completely:", e2);
-        return;
+        const uref = db.ref("users/" + user.uid + "/householdId");
+        const snap = await uref.get();
+        let hid = snap.exists() ? snap.val() : null;
+        if (!hid) {
+          hid = genId();
+          await db.ref("household/" + hid).set({
+            createdBy: user.uid, createdAt: Date.now(),
+            members: { [user.uid]: me }
+          });
+          await uref.set(hid);
+        }
+        Household.id = hid;
+        Household.mode = "shared";
+        ref = db.ref("household/" + hid);
+      } catch (e) {
+        console.warn("[household] shared недоступен, личный путь:", e && e.code || e);
       }
+    }
+
+    // Личный путь (по умолчанию и как fallback)
+    if (!ref) {
+      ref = db.ref("users/" + user.uid + "/household");
+      Household.id = "self:" + user.uid;
+      Household.mode = "personal";
+      // гарантируем запись об участнике (для аватаров)
+      ref.child("members/" + user.uid).set(me).catch(e =>
+        console.warn("[household] member write:", e && e.code || e));
     }
 
     Household.ref = ref;
