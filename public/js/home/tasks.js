@@ -77,7 +77,6 @@
 
     main.innerHTML = `
       ${renderChores(chores)}
-      ${renderBalance(chores, tasks, duties)}
       ${renderTasks(tasks)}
       ${renderDuties(duties)}
     `;
@@ -132,28 +131,6 @@
           <div class="tsk-chore__when">${c.lastDone ? `делали ${fmtAgo(c.lastDone)} · далее ${escapeHtml(nameOf(nextUid))}` : `далее ${escapeHtml(nameOf(nextUid))}`}</div>
         </div>
         <button class="tsk-chore__done" onclick="event.stopPropagation();TasksUI.doneChore('${c.id}')">✓ Сделал</button>
-      </div>`;
-  }
-
-  /* ── Баланс нагрузки (счёт выполнений по партнёрам) ── */
-  function renderBalance(chores, tasks, duties) {
-    const m = members();
-    if (m.length < 2) return "";
-    // считаем done-tasks по assignee + lastDoneBy у chores
-    const count = {};
-    m.forEach(x => count[x.uid] = 0);
-    tasks.forEach(t => { if (t.done && t.assignee && count[t.assignee] != null) count[t.assignee]++; });
-    chores.forEach(c => { if (c.lastDoneBy && count[c.lastDoneBy] != null) count[c.lastDoneBy]++; });
-    // показываем только если есть хоть какая-то активность
-    const total = Object.values(count).reduce((a, b) => a + b, 0);
-    if (total === 0) return "";
-    return `
-      <div class="tsk-balance anim">
-        ${m.map(x => `
-          <div class="tsk-bal-card" style="--c:${x.color};">
-            <div class="tsk-bal-card__n">${count[x.uid]}</div>
-            <div class="tsk-bal-card__l"><span class="tsk-who__dot" style="background:${x.color};"></span>${escapeHtml(x.name)} · сделано</div>
-          </div>`).join("")}
       </div>`;
   }
 
