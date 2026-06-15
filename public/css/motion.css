@@ -25,7 +25,6 @@
 .stk-shelf .stk-item,
 .tsk-section .tsk-chore,
 .tsk-card .tsk-row,
-.duty-grid .duty,
 #main > .anim .rc-card,
 .rc-cats .rc-cat {
   animation: m-rise .44s cubic-bezier(.34,1.25,.5,1) both;

@@ -6,7 +6,7 @@
 
 Два «мира», переключаемых сверху:
 - 💰 **Деньги** — доходы, расходы, копилка, бюджеты, автоплатежи (личные, `users/{uid}`)
-- 🏠 **Дом** — запасы/холодильник, дела/обязанности, рецепты (общие для пары, `household/{id}`)
+- 🏠 **Дом** — запасы/холодильник, дела (дежурства+задачи), рецепты (общие для пары, `household/{id}`)
 
 **Рабочий файл — `public/index.html`** (НЕ корневой `index.html`, тот устарел). Firebase деплоит папку `public/`.
 
@@ -87,7 +87,7 @@ householdId — ссылка на общее пространство пары
 ```
 members  — {uid: {name, photo, email}}
 stock    — Этап 2 (запасы)
-tasks    — Этап 3 (дела/обязанности/очередь)
+chores/tasks — дежурства (очередь) + разовые задачи
 recipes  — Этап 4 (рецепты)
 ```
 Bootstrap в `household.js` (`initHousehold`): при первом входе создаётся household, id пишется в `users/{uid}/householdId`. Подписка `.on("value")` держит `window.Household.data` живым. Сохранение: `window.saveHousehold(section, value)`.

@@ -1,13 +1,11 @@
 /* ============================================================
-   HOME · ДЕЛА (Этап 3)
-   Очередь сверху (кто дежурный, авто-чередование) + секции:
-   Сегодня (разовые задачи с дедлайнами), Обязанности (зоны).
-   Цветовая метка партнёра у каждого дела.
+   HOME · ДЕЛА
+   Дежурства (авто-чередование очереди между партнёрами) +
+   Задачи (разовые с дедлайнами). Цветовая метка партнёра.
 
    Данные household/{id}:
-     chores: {id:{title,emoji,rotation:[uid…],turnIdx,freq,lastDone,ts}}
+     chores: {id:{title,icon,rotation:[uid…],turnIdx,lastDone,lastDoneBy,ts}}
      tasks:  {id:{title,assignee,done,due,ts}}
-     duties: {id:{title,emoji,owner}}
    ============================================================ */
 
 (function () {
@@ -15,9 +13,8 @@
 
   // ключи duotone-иконок из icons.js (HOME_ICONS) — НЕ эмодзи
   const CHORE_ICONS = ["dishes","trash","broom","laundry","cook","cart","plant","pet","bath","iron"];
-  const DUTY_ICONS  = ["dishes","bath","bed","broom","plant","pet","laundry","cook"];
 
-  let editType = null;   // 'task' | 'chore' | 'duty'
+  let editType = null;   // 'task' | 'chore'
   let editId = null;
   const form = {};
 
@@ -25,7 +22,6 @@
   function H() { return (window.Household && window.Household.data) || {}; }
   function choresObj() { return H().chores || {}; }
   function tasksObj()  { return H().tasks  || {}; }
-  function dutiesObj() { return H().duties || {}; }
   function arr(o) { return Object.entries(o || {}).map(([id, v]) => ({ id, ...v })); }
 
   function save(section, obj) { if (window.saveHousehold) window.saveHousehold(section, obj); }
@@ -74,12 +70,10 @@
   function render(main) {
     const chores = arr(choresObj());
     const tasks = arr(tasksObj()).sort((a, b) => (a.done - b.done) || (a.ts || 0) - (b.ts || 0));
-    const duties = arr(dutiesObj());
 
     main.innerHTML = `
       ${renderChores(chores)}
       ${renderTasks(tasks)}
-      ${renderDuties(duties)}
     `;
   }
 
@@ -170,35 +164,6 @@
       </div>`;
   }
 
-  /* ── Секция «Обязанности» (зоны) ── */
-  function renderDuties(duties) {
-    const body = duties.length
-      ? `<div class="duty-grid">${duties.map(dutyCard).join("")}</div>`
-      : `<div class="tsk-empty">Закрепите зоны: «ты — кухня, я — ванная».</div>`;
-    return `
-      <div class="tsk-section anim">
-        <div class="tsk-section__head">
-          <h2>🧭 Обязанности</h2>
-          <button class="tsk-section__add" onclick="TasksUI.add('duty')">+</button>
-        </div>
-        ${body}
-      </div>`;
-  }
-
-  function dutyCard(d) {
-    const col = colorOf(d.owner);
-    const icoKey = d.icon || "broom";
-    return `
-      <div class="duty" style="--c:${col};" onclick="TasksUI.edit('duty','${d.id}')">
-        <div class="duty__emoji">${window.duoTile ? window.duoTile(icoKey, 22, 42, col) : ""}</div>
-        <div class="duty__title">${escapeHtml(d.title)}</div>
-        <div class="duty__owner">
-          <span class="duty__ownerdot" style="background:${col};">${nameOf(d.owner).slice(0,1).toUpperCase()}</span>
-          ${escapeHtml(nameOf(d.owner))}
-        </div>
-      </div>`;
-  }
-
   function fmtAgo(ts) {
     const days = Math.floor((Date.now() - ts) / 86400000);
     if (days <= 0) return "сегодня";
@@ -241,7 +206,7 @@
   }
 
   /* ============================================================
-     SHEET добавления / редактирования (task | chore | duty)
+     SHEET добавления / редактирования (task | chore)
      ============================================================ */
   function add(type) { openSheet(type, null); }
 
@@ -249,15 +214,14 @@
     editType = type; editId = id;
     const m = members();
     let src = null;
-    if (id) src = (type === "task" ? tasksObj() : type === "chore" ? choresObj() : dutiesObj())[id];
+    if (id) src = (type === "task" ? tasksObj() : choresObj())[id];
 
-    const defIcon = type === "duty" ? DUTY_ICONS[0] : CHORE_ICONS[0];
+    const defIcon = CHORE_ICONS[0];
     Object.assign(form, {
       title: src ? src.title : "",
       assignee: src ? (src.assignee || m[0].uid) : m[0].uid,
       due: src ? (src.due || "") : "",
       icon: src ? (src.icon || defIcon) : defIcon,
-      owner: src ? (src.owner || m[0].uid) : m[0].uid,
       rotation: src && src.rotation ? src.rotation.slice() : m.map(x => x.uid)
     });
     mountSheet();
@@ -272,9 +236,8 @@
       document.body.appendChild(ov);
     }
     const titles = {
-      task:  { neu: "Новая",  name: "задача",      edit: "Изменить задачу" },
-      chore: { neu: "Новое",  name: "дежурство",   edit: "Изменить дежурство" },
-      duty:  { neu: "Новая",  name: "обязанность", edit: "Изменить обязанность" }
+      task:  { neu: "Новая",  name: "задача",    edit: "Изменить задачу" },
+      chore: { neu: "Новое",  name: "дежурство", edit: "Изменить дежурство" }
     };
     const tt = titles[editType];
     ov.innerHTML = `<div class="hub-sheet">
@@ -317,7 +280,7 @@
   }
 
   function iconChips() {
-    const set = editType === "duty" ? DUTY_ICONS : CHORE_ICONS;
+    const set = CHORE_ICONS;
     return set.map(k => {
       const on = form.icon === k;
       return `<div class="hub-chip ${on ? "on" : ""}" style="${on ? "background:var(--home);" : ""}padding:8px;"
@@ -327,11 +290,10 @@
 
   function renderAssigneeField() {
     const m = members();
-    const key = editType === "duty" ? "owner" : "assignee";
-    const cur = form[key];
+    const cur = form.assignee;
     return `
       <div class="hub-field">
-        <label>${editType === "duty" ? "Ответственный" : "Кому"}</label>
+        <label>Кому</label>
         <div class="hub-chiprow" id="tf-assignee">
           ${m.map(x => `<div class="hub-chip ${cur === x.uid ? "on" : ""}" style="${cur === x.uid ? `background:${x.color};` : ""}"
             onclick="TasksUI.formAssignee('${x.uid}')">
@@ -370,7 +332,7 @@
     document.getElementById("tf-emoji").innerHTML = iconChips();
   }
   function formAssignee(uid) {
-    if (editType === "duty") form.owner = uid; else form.assignee = uid;
+    form.assignee = uid;
     const wrap = document.getElementById("tf-assignee");
     if (wrap) {
       const m = members();
@@ -383,20 +345,18 @@
   function saveForm() {
     syncTitle();
     if (!form.title.trim()) { if (window.toast) window.toast("Укажите название"); return; }
-    const section = editType === "task" ? "tasks" : editType === "chore" ? "chores" : "duties";
-    const obj = editType === "task" ? tasksObj() : editType === "chore" ? choresObj() : dutiesObj();
+    const section = editType === "task" ? "tasks" : "chores";
+    const obj = editType === "task" ? tasksObj() : choresObj();
     const id = editId || (editType[0] + "_" + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-3));
 
     let rec;
     if (editType === "task") {
       rec = { title: form.title.trim(), assignee: form.assignee, due: form.due || "",
               done: (obj[id] && obj[id].done) || false, ts: (obj[id] && obj[id].ts) || Date.now() };
-    } else if (editType === "chore") {
+    } else {
       rec = { title: form.title.trim(), icon: form.icon, rotation: form.rotation,
               turnIdx: (obj[id] && obj[id].turnIdx) || 0, lastDone: (obj[id] && obj[id].lastDone) || 0,
               lastDoneBy: (obj[id] && obj[id].lastDoneBy) || "", ts: (obj[id] && obj[id].ts) || Date.now() };
-    } else {
-      rec = { title: form.title.trim(), icon: form.icon, owner: form.owner, ts: (obj[id] && obj[id].ts) || Date.now() };
     }
     obj[id] = rec;
     save(section, obj);
@@ -406,8 +366,8 @@
 
   function remove() {
     if (!editId) return;
-    const section = editType === "task" ? "tasks" : editType === "chore" ? "chores" : "duties";
-    const obj = editType === "task" ? tasksObj() : editType === "chore" ? choresObj() : dutiesObj();
+    const section = editType === "task" ? "tasks" : "chores";
+    const obj = editType === "task" ? tasksObj() : choresObj();
     delete obj[editId];
     save(section, obj);
     closeSheet();
