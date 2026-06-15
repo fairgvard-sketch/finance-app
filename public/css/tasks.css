@@ -1,0 +1,121 @@
+/* ============================================================
+   TASKS — экран «Дела». Очередь сверху (кто дежурный),
+   ниже секции: Сегодня (задачи), Обязанности (зоны).
+   Цветовая метка партнёра у каждого дела.
+   ============================================================ */
+
+/* ── ГЕРОЙ: чья очередь ── */
+.tsk-turn {
+  position: relative; overflow: hidden;
+  border-radius: var(--r-xl); padding: 20px;
+  color: #fff; box-shadow: var(--sh-md);
+  background: linear-gradient(150deg, var(--turn-c, #2f6a4c) 0%, color-mix(in srgb, var(--turn-c,#2f6a4c) 78%, #000) 130%);
+}
+.tsk-turn__blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.10); }
+.tsk-turn__eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .09em;
+  text-transform: uppercase; color: rgba(255,255,255,.72); }
+.tsk-turn__row { display: flex; align-items: center; gap: 14px; margin-top: 12px; position: relative; z-index: 1; }
+.tsk-turn__av {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  border: 3px solid rgba(255,255,255,.4); object-fit: cover;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 22px;
+  background: rgba(255,255,255,.18); color: #fff;
+}
+.tsk-turn__who { flex: 1; min-width: 0; }
+.tsk-turn__name { font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.1; letter-spacing: -.01em; }
+.tsk-turn__chore { font-size: 13.5px; color: rgba(255,255,255,.85); margin-top: 3px; }
+.tsk-turn__done {
+  border: none; cursor: pointer; border-radius: var(--r-pill);
+  padding: 13px 18px; background: #fff; color: var(--turn-c, #2f6a4c);
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0,0,0,.18); transition: transform .14s;
+}
+.tsk-turn__done:active { transform: scale(.94); }
+/* следующий в очереди */
+.tsk-turn__next { margin-top: 14px; display: flex; align-items: center; gap: 8px;
+  position: relative; z-index: 1; font-size: 12.5px; color: rgba(255,255,255,.8); }
+.tsk-turn__nextav { width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,.22); border: 1.5px solid rgba(255,255,255,.5); }
+
+/* ── Чипы повторяющихся дел (несколько очередей) ── */
+.tsk-chores { display: flex; gap: 10px; overflow-x: auto; padding: 2px; margin: 0 -2px; }
+.tsk-chore {
+  flex: 0 0 auto; min-width: 124px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg); padding: 13px 14px; box-shadow: var(--sh-sm);
+  border-left: 4px solid var(--c, var(--home));
+  transition: transform .14s;
+}
+.tsk-chore:active { transform: scale(.97); }
+.tsk-chore__top { display: flex; align-items: center; gap: 8px; }
+.tsk-chore__emoji { font-size: 20px; }
+.tsk-chore__title { font-weight: 700; font-size: 14px; color: var(--ink); }
+.tsk-chore__turn { display: flex; align-items: center; gap: 6px; margin-top: 9px; font-size: 12px; color: var(--ink-2); }
+.tsk-chore__dot { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0; }
+
+/* ── Секции ── */
+.tsk-section { margin-top: 4px; }
+.tsk-section__head { display: flex; align-items: center; justify-content: space-between; margin: 6px 2px 10px; }
+.tsk-section__head h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--ink); }
+.tsk-section__add { width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--home); color: #fff; font-size: 19px; box-shadow: var(--sh-accent);
+  display: flex; align-items: center; justify-content: center; transition: transform .14s; }
+.tsk-section__add:active { transform: scale(.9); }
+
+/* ── Строка задачи ── */
+.tsk-card { background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg); box-shadow: var(--sh-sm); overflow: hidden; }
+.tsk-row { display: flex; align-items: center; gap: 12px; padding: 13px 15px;
+  border-bottom: 1px solid var(--line-soft); cursor: pointer; transition: background .14s; }
+.tsk-row:last-child { border-bottom: none; }
+.tsk-row:active { background: var(--surface-2); }
+.tsk-row.done .tsk-row__title { text-decoration: line-through; color: var(--ink-3); }
+.tsk-check {
+  width: 26px; height: 26px; border-radius: 9px; border: 2px solid var(--line);
+  cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: var(--surface); transition: all .18s;
+}
+.tsk-check.done { background: var(--c, var(--home)); border-color: var(--c, var(--home)); }
+.tsk-check svg { width: 15px; height: 15px; stroke: #fff; stroke-width: 3; fill: none; opacity: 0; transition: opacity .15s; }
+.tsk-check.done svg { opacity: 1; }
+.tsk-row__body { flex: 1; min-width: 0; }
+.tsk-row__title { font-weight: 600; font-size: 15px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tsk-row__meta { display: flex; align-items: center; gap: 7px; margin-top: 4px; font-size: 12px; color: var(--ink-2); }
+/* цветная метка ответственного */
+.tsk-who { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; }
+.tsk-who__dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tsk-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: var(--r-pill); }
+.tsk-badge.due-bad { background: var(--neg-soft); color: var(--neg); }
+.tsk-badge.due-soon { background: var(--warn-soft); color: #9a6a12; }
+.tsk-badge.due-ok { background: var(--surface-2); color: var(--ink-2); }
+
+/* ── Обязанности (зоны) ── */
+.duty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.duty {
+  position: relative; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg); padding: 14px; box-shadow: var(--sh-sm);
+  cursor: pointer; border-top: 4px solid var(--c, var(--home));
+  transition: transform .14s;
+}
+.duty:active { transform: scale(.97); }
+.duty__emoji { font-size: 22px; }
+.duty__title { font-weight: 700; font-size: 14px; color: var(--ink); margin-top: 8px; }
+.duty__owner { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--ink-2); }
+.duty__ownerdot { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff; }
+
+.tsk-empty { text-align: center; padding: 28px 18px; color: var(--ink-3);
+  border: 2px dashed var(--line); border-radius: var(--r-lg); font-size: 13.5px; }
+
+/* ── Баланс нагрузки (мини) ── */
+.tsk-balance { display: flex; gap: 10px; }
+.tsk-bal-card { flex: 1; background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--r-md); padding: 12px 14px; box-shadow: var(--sh-sm);
+  border-left: 4px solid var(--c, var(--home)); }
+.tsk-bal-card__n { font-family: var(--font-display); font-weight: 700; font-size: 22px; color: var(--ink); }
+.tsk-bal-card__l { font-size: 12px; color: var(--ink-2); margin-top: 2px; display: flex; align-items: center; gap: 5px; }

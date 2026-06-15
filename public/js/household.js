@@ -12,10 +12,30 @@
 (function () {
   "use strict";
 
+  // Палитра цветов партнёров (контрастные, тёплые)
+  const MEMBER_COLORS = ["#2f6a4c", "#b5613e", "#4f86c4", "#9b72cf"];
+
   const Household = {
     id: null,
     data: { members: {}, stock: {}, tasks: {}, recipes: {} },
-    ref: null
+    ref: null,
+    // массив участников [{uid, name, photo, color}]
+    members() {
+      const m = (this.data && this.data.members) || {};
+      return Object.entries(m).map(([uid, v], i) => ({
+        uid, name: v.name || "?", photo: v.photo || "",
+        color: v.color || MEMBER_COLORS[i % MEMBER_COLORS.length]
+      }));
+    },
+    memberColor(uid) {
+      const found = this.members().find(x => x.uid === uid);
+      return found ? found.color : "var(--ink-3)";
+    },
+    memberName(uid) {
+      const found = this.members().find(x => x.uid === uid);
+      return found ? found.name : "?";
+    },
+    me() { return (window._authUid) || (this.members()[0] && this.members()[0].uid) || null; }
   };
   window.Household = Household;
 
@@ -36,10 +56,12 @@
   // — тогда данные станут общими для пары.
   async function initHousehold(user, db) {
     if (!user || !db) return;
+    window._authUid = user.uid;   // кто я (для очереди дел и пр.)
     const me = {
       name: (user.displayName || "").split(" ")[0] || "Я",
       photo: user.photoURL || "",
-      email: user.email || ""
+      email: user.email || "",
+      color: MEMBER_COLORS[0]     // первый участник — зелёный
     };
 
     const tryShared = localStorage.getItem("hub.sharedHousehold") === "1";
