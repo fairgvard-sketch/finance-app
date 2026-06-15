@@ -219,9 +219,19 @@
     const obj = choresObj(); const c = obj[id]; if (!c) return;
     const rot = (c.rotation && c.rotation.length) ? c.rotation : members().map(m => m.uid);
     const curUid = rot[(c.turnIdx || 0) % rot.length];
-    obj[id] = { ...c, turnIdx: ((c.turnIdx || 0) + 1) % rot.length, lastDone: Date.now(), lastDoneBy: curUid };
-    save("chores", obj);
-    if (window.toast) window.toast(`Готово! Теперь очередь: ${nameOf(rot[((c.turnIdx || 0) + 1) % rot.length])}`);
+    const next = nameOf(rot[((c.turnIdx || 0) + 1) % rot.length]);
+
+    // момент действия: карточка пульсирует, иконка проворачивается
+    const card = document.querySelector(`.tsk-chore[onclick*="'${id}'"]`);
+    if (card && window.Motion) window.Motion.flash(card, "m-done", 500);
+
+    const apply = () => {
+      obj[id] = { ...c, turnIdx: ((c.turnIdx || 0) + 1) % rot.length, lastDone: Date.now(), lastDoneBy: curUid };
+      save("chores", obj);
+      if (window.toast) window.toast(`Готово! Теперь очередь: ${next}`);
+    };
+    // даём анимации проиграться (если reduced-motion — почти мгновенно)
+    if (card && window.Motion) setTimeout(apply, 280); else apply();
   }
 
   function toggleTask(id) {

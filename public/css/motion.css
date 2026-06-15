@@ -1,0 +1,119 @@
+/* ============================================================
+   MOTION — централизованный слой анимаций домашнего хаба.
+   Только transform/opacity (GPU-friendly). Полностью
+   отключается при prefers-reduced-motion.
+   ============================================================ */
+
+/* ── Базовые keyframes ── */
+@keyframes m-rise   { from { opacity: 0; transform: translateY(16px); }      to { opacity: 1; transform: none; } }
+@keyframes m-pop    { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes m-checkpop { 0% { transform: scale(1); } 40% { transform: scale(1.28); } 100% { transform: scale(1); } }
+@keyframes m-spin   { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes m-fadein { from { opacity: 0; } to { opacity: 1; } }
+@keyframes m-floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes m-shimmer { 0% { background-position: -160px 0; } 100% { background-position: 220px 0; } }
+@keyframes m-toastin { 0% { opacity: 0; transform: translateX(-50%) translateY(16px) scale(.96); } 100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+
+/* ============================================================
+   1. STAGGERED ПОЯВЛЕНИЕ ВНУТРИ СПИСКОВ
+   Контейнеры рендерятся при входе в раздел; их прямые дети
+   «вытекают» снизу каскадом. Делаем целевым перечислением,
+   чтобы не задеть произвольную вёрстку.
+   ============================================================ */
+.bento > .bento-tile,
+.bento > .bento-add,
+.stk-shelf .stk-item,
+.tsk-section .tsk-chore,
+.tsk-card .tsk-row,
+.duty-grid .duty,
+#main > .anim .rc-card,
+.rc-cats .rc-cat {
+  animation: m-rise .44s cubic-bezier(.34,1.25,.5,1) both;
+}
+/* каскад по позиции (до 10 элементов) */
+.bento > *:nth-child(1), .stk-shelf .stk-item:nth-child(1), .tsk-section .tsk-chore:nth-child(1), .tsk-card .tsk-row:nth-child(1), .duty-grid .duty:nth-child(1), #main > .anim .rc-card:nth-child(1) { animation-delay: .03s; }
+.bento > *:nth-child(2), .stk-shelf .stk-item:nth-child(2), .tsk-section .tsk-chore:nth-child(2), .tsk-card .tsk-row:nth-child(2), .duty-grid .duty:nth-child(2), #main > .anim .rc-card:nth-child(2) { animation-delay: .07s; }
+.bento > *:nth-child(3), .stk-shelf .stk-item:nth-child(3), .tsk-section .tsk-chore:nth-child(3), .tsk-card .tsk-row:nth-child(3), .duty-grid .duty:nth-child(3), #main > .anim .rc-card:nth-child(3) { animation-delay: .11s; }
+.bento > *:nth-child(4), .stk-shelf .stk-item:nth-child(4), .tsk-section .tsk-chore:nth-child(4), .tsk-card .tsk-row:nth-child(4), .duty-grid .duty:nth-child(4), #main > .anim .rc-card:nth-child(4) { animation-delay: .15s; }
+.bento > *:nth-child(5), .stk-shelf .stk-item:nth-child(5), .tsk-section .tsk-chore:nth-child(5), .tsk-card .tsk-row:nth-child(5), #main > .anim .rc-card:nth-child(5) { animation-delay: .19s; }
+.bento > *:nth-child(6), .stk-shelf .stk-item:nth-child(6), .tsk-section .tsk-chore:nth-child(6), .tsk-card .tsk-row:nth-child(6), #main > .anim .rc-card:nth-child(6) { animation-delay: .23s; }
+.stk-shelf .stk-item:nth-child(n+7), .tsk-card .tsk-row:nth-child(n+7), #main > .anim .rc-card:nth-child(n+7) { animation-delay: .27s; }
+
+/* ============================================================
+   2. ПЕРЕХОД МЕЖДУ МИРАМИ / РАЗДЕЛАМИ
+   #main мягко «дышит» при смене содержимого. Класс ставится
+   из JS на каждый ре-рендер (motion.js).
+   ============================================================ */
+#main.m-swap { animation: m-rise .34s cubic-bezier(.34,1.2,.64,1) both; }
+
+/* переключатель миров — активная кнопка слегка подпрыгивает */
+.world-switch__btn.on .em { animation: m-pop .42s cubic-bezier(.34,1.56,.64,1) both; }
+
+/* нав: активная иконка чуть всплывает */
+.hub-nav .nb.on svg { animation: m-pop .4s cubic-bezier(.34,1.5,.64,1) both; }
+
+/* ============================================================
+   3. МИКРО-ВЗАИМОДЕЙСТВИЯ (отклик на действие)
+   ============================================================ */
+
+/* галочки задач/покупок: «щелчок» при отметке */
+.shop-check.done svg,
+.tsk-check.done svg,
+.stk-dot.on i { animation: m-checkpop .34s cubic-bezier(.34,1.6,.5,1) both; }
+
+/* статус-точка запасов при смене */
+.stk-seg button.on i { animation: m-checkpop .3s cubic-bezier(.34,1.6,.5,1) both; }
+
+/* избранное-сердце в рецептах */
+.rc-card__fav:active { animation: m-checkpop .3s ease both; }
+
+/* дежурство «сделано»: карточка кратко пульсирует (через JS-класс) */
+.tsk-chore.m-done { animation: m-checkpop .45s cubic-bezier(.34,1.5,.5,1); }
+/* иконка очереди-перехода крутится один раз */
+.tsk-chore.m-done .tsk-chore__emoji svg { animation: m-spin .5s cubic-bezier(.5,0,.3,1); }
+
+/* только что добавленный элемент (JS ставит .m-new) */
+.m-new { animation: m-pop .5s cubic-bezier(.34,1.5,.5,1) both !important; }
+
+/* ============================================================
+   4. SHEET-ПЕРЕХОДЫ (усиление пружины)
+   ============================================================ */
+.hub-sheet-ov.show .hub-sheet {
+  transition: transform .46s cubic-bezier(.22,1.2,.36,1);
+}
+/* контент sheet проявляется чуть позже фона */
+.hub-sheet-ov.show .hub-sheet > * { animation: m-rise .4s cubic-bezier(.34,1.2,.64,1) both; }
+.hub-sheet-ov.show .hub-sheet > *:nth-child(2) { animation-delay: .05s; }
+.hub-sheet-ov.show .hub-sheet > *:nth-child(3) { animation-delay: .09s; }
+.hub-sheet-ov.show .hub-sheet > *:nth-child(4) { animation-delay: .13s; }
+.hub-sheet-ov.show .hub-sheet > *:nth-child(5) { animation-delay: .17s; }
+.hub-sheet-ov.show .hub-sheet > *:nth-child(n+6) { animation-delay: .2s; }
+
+/* ============================================================
+   5. АТМОСФЕРА (тонкие живые детали)
+   ============================================================ */
+/* блобы на герой-карточках слегка дышат */
+.stk-hero__blob, .tsk-turn__blob, .widget__glow { animation: m-floaty 6s ease-in-out infinite; }
+.stk-hero__blob:nth-child(2) { animation-delay: -3s; }
+
+/* плейсхолдер фото рецепта — мягкое мерцание иконки */
+.rc-card__ph svg, .rc-detail__hero .rc-card__ph svg { animation: m-floaty 5s ease-in-out infinite; }
+
+/* кнопка [+] в навигации — лёгкий «вдох» при простое */
+.nb-add { animation: m-floaty 4.5s ease-in-out infinite; }
+
+/* toast — приятный въезд */
+#hub-toast { animation: none; }
+#hub-toast.m-show { animation: m-toastin .3s cubic-bezier(.34,1.4,.5,1) both; }
+
+/* ============================================================
+   6. УВАЖЕНИЕ К prefers-reduced-motion — выключаем всё
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
