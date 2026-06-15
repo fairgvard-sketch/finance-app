@@ -23,10 +23,13 @@
   }
 
   function widget(opts) {
+    // duotone-иконка в плашке — единый стиль с финансами (catTile)
+    const tile = window.duoTile ? window.duoTile(opts.icon, 26, 46) : "";
+    const color = (window.HOME_ICON_COLOR && window.HOME_ICON_COLOR[opts.icon]) || "var(--home)";
     return `
       <div class="widget anim" onclick="goTab('${opts.tab}')">
-        <div class="widget__glow" style="background:${opts.color};"></div>
-        <div class="widget__icon" style="background:${opts.soft};">${opts.emoji}</div>
+        <div class="widget__tile">${tile}</div>
+        <div class="widget__glow" style="background:${color};"></div>
         <div class="widget__title">${opts.title}</div>
         <div class="widget__meta">${opts.meta}</div>
       </div>`;
@@ -50,23 +53,19 @@
 
       <div class="widget-grid">
         ${widget({
-          tab: "stock", emoji: "🧺", title: "Запасы",
-          color: "#b5613e", soft: "var(--home-soft)",
+          tab: "stock", icon: "stock", title: "Запасы",
           meta: s.stockCount ? `${s.stockCount} позиций${s.low ? ` · ${s.low} кончается` : ""}` : "Холодильник, химия, нужное"
         })}
         ${widget({
-          tab: "tasks", emoji: "✅", title: "Дела",
-          color: "#2f6a4c", soft: "var(--money-soft)",
+          tab: "tasks", icon: "tasks", title: "Дела",
           meta: s.openTasks ? `${s.openTasks} активных` : "Обязанности и очередь"
         })}
         ${widget({
-          tab: "recipes", emoji: "🍳", title: "Рецепты",
-          color: "#d99a2b", soft: "var(--warn-soft)",
+          tab: "recipes", icon: "recipes", title: "Рецепты",
           meta: s.recipeCount ? `${s.recipeCount} сохранено` : "Что приготовить"
         })}
         ${widget({
-          tab: "stock", emoji: "🛒", title: "Купить",
-          color: "#457b9d", soft: "#e6eef3",
+          tab: "stock", icon: "cart", title: "Купить",
           meta: s.low ? `${s.low} в списке` : "Список покупок"
         })}
       </div>
@@ -74,7 +73,7 @@
       <div class="card anim">
         <div class="section-head"><h2>Очередь дел</h2></div>
         <div style="display:flex;align-items:center;gap:12px;padding:6px 2px;">
-          <div style="width:40px;height:40px;border-radius:12px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:20px;">🔁</div>
+          ${window.duoTile ? window.duoTile("queue", 22, 42) : ""}
           <div style="flex:1;">
             <div class="font-semibold" style="font-size:14px;">Чья сейчас очередь</div>
             <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px;">Мытьё посуды, уборка — настроится в разделе «Дела»</div>
