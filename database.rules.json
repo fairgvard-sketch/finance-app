@@ -2,13 +2,21 @@
   "rules": {
     "users": {
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid"
+        ".read": "auth != null",
+        ".write": "auth.uid === $uid"
       }
     },
+
+    "invites": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+
     "household": {
       "$hid": {
-        ".read": "auth != null && (data.child('members').child(auth.uid).exists() || !data.exists())",
+        ".read": "auth != null && (!data.exists() || data.child('members').child(auth.uid).exists())",
         ".write": "auth != null && (!data.exists() || data.child('members').child(auth.uid).exists() || newData.child('members').child(auth.uid).exists())"
       }
     }
