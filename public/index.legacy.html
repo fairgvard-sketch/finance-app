@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Финансовый контроль</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
-<!-- Домашний хаб: дизайн-токены + оболочка (поверх легаси-стилей денег) -->
-<link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/shell.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-bottom:calc(94px + env(safe-area-inset-bottom));min-height:100vh;}
@@ -198,31 +195,21 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 <!-- APP ROOT (hidden until logged in) -->
 <div id="app-root" style="display:none;">
 
-<!-- ░░ ШАПКА ХАБА (марка текущего мира + аватары household + выход) ░░ -->
-<div id="app-header" class="hub-header">
-  <div class="hub-header__title">
-    <div id="hub-mark" class="hub-header__mark">💰</div>
-    <div>
-      <div id="hub-name" class="hub-header__name">Финансы</div>
-      <div id="hub-sub" class="hub-header__sub">Доходы, расходы, копилка</div>
+<div id="app-header" class="header" style="padding:16px 20px 14px;align-items:flex-start;">
+  <div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="go('home')" title="На главную">
+    <div style="width:46px;height:46px;background:#1a4a35;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;" onmousedown="this.style.transform='scale(0.93)'" onmouseup="this.style.transform=''" ontouchend="this.style.transform=''"><svg width="26" height="26" color="#fff"><use href="#ico-bag"/></svg></div>
+    <div style="line-height:1.15;">
+      <div style="font-weight:700;font-size:22px;color:#1c1c1e;letter-spacing:-0.04em;font-family:'Unbounded',sans-serif;line-height:1.15;">Финансовый</div>
+      <div style="font-weight:700;font-size:22px;color:#1a4a35;letter-spacing:-0.04em;font-family:'Unbounded',sans-serif;line-height:1.15;">контроль</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <div id="hub-avatars" class="hub-avatars"></div>
-    <div style="cursor:pointer;display:flex;align-items:center;" onclick="signOutUser()" title="Выйти">
-      <img id="user-avatar" style="display:none;width:0;height:0;" src="">
-      <span id="user-name" style="display:none;"></span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-      </svg>
-    </div>
+  <div style="display:flex;align-items:center;gap:8px;cursor:pointer;background:#f7f6f2;border-radius:50px;padding:5px 12px 5px 5px;transition:background .15s;" onclick="signOutUser()">
+    <img id="user-avatar" style="display:none;width:32px;height:32px;border-radius:50%;border:2px solid #e8e8e8;" src="">
+    <span id="user-name" style="font-size:13px;color:#1c1c1e;font-weight:600;"></span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
   </div>
-</div>
-
-<!-- ░░ ПЕРЕКЛЮЧАТЕЛЬ МИРОВ ░░ -->
-<div id="world-switch" class="world-switch">
-  <button class="world-switch__btn on" data-world="money" onclick="setWorld('money')"><span class="em">💰</span>Деньги</button>
-  <button class="world-switch__btn" data-world="home" onclick="setWorld('home')"><span class="em">🏠</span>Дом</button>
 </div>
 
 
@@ -326,24 +313,24 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
   <symbol id="ico-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polyline points="9 18 15 12 9 6"/>
   </symbol>
-  <!-- Иконки мира «Дом» -->
-  <symbol id="ico-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
-  </symbol>
-  <symbol id="ico-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-  </symbol>
-  <symbol id="ico-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-  </symbol>
-  <symbol id="ico-chef" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6z"/><line x1="6" y1="17" x2="18" y2="17"/>
-  </symbol>
 </svg>
 
-<!-- ░░ КОНТЕКСТНАЯ НИЖНЯЯ НАВИГАЦИЯ (наполняется shell.js) ░░ -->
-<div class="hub-nav">
-  <div class="hub-nav__inner" id="hub-nav-inner"></div>
+<div class="nav-bar">
+  <button class="nb active" id="nb-home" onclick="go('home')">
+    <svg width="26" height="26" data-outline="1"><use href="#ico-home"/></svg>Главная
+  </button>
+  <button class="nb" id="nb-piggy" onclick="go('piggy')">
+    <svg width="26" height="26" class="fill-icon"><use href="#ico-piggy"/></svg>Копилка
+  </button>
+  <button class="btn-g" onclick="openTx()" style="border-radius:50%;width:52px;height:52px;padding:0;display:flex;align-items:center;justify-content:center;margin:0 6px;box-shadow:0 4px 16px rgba(26,74,53,0.35);border:none;cursor:pointer;">
+    <svg width="24" height="24" color="#fff"><use href="#ico-plus"/></svg>
+  </button>
+  <button class="nb" id="nb-budget" onclick="go('budget')">
+    <svg width="26" height="26" data-outline="1"><use href="#ico-budget"/></svg>Бюджеты
+  </button>
+  <button class="nb" id="nb-history" onclick="go('history')">
+    <svg width="26" height="26" data-outline="1"><use href="#ico-history"/></svg>История
+  </button>
 </div>
 
 <!-- ADD TX -->
@@ -766,10 +753,6 @@ function showApp(user) {
   const nameEl = document.getElementById("user-name");
   if(nameEl) nameEl.textContent = user.displayName?.split(" ")[0] || "";
   window._fbReady = true;
-  // Оболочка хаба: миры + контекстная навигация
-  if(typeof window.initShell==="function") window.initShell();
-  // Общее пространство пары (раздельно финансы + общий быт)
-  if(typeof window.initHousehold==="function") window.initHousehold(user, db);
   applyRecurrings();
   if(window._fbInit) window._fbInit();
 }
@@ -921,8 +904,7 @@ window._fbInit = function(){
     try{localStorage.setItem("tx",JSON.stringify(txs));localStorage.setItem("subs",JSON.stringify(subs));localStorage.setItem("goals",JSON.stringify(goals));localStorage.setItem("budgets",JSON.stringify(budgets));localStorage.setItem("recur",JSON.stringify(recurrings));localStorage.setItem("lastSaved",String(fbTs));}catch(e){}
   }
   applyRecurrings();
-  // Через оболочку: рендер текущего мира (деньги или дом)
-  if(typeof window.renderShell==="function") window.renderShell(); else render();
+  render();
 };
 
 // ── STATE ──
@@ -1113,17 +1095,11 @@ function setHistSearch(s){
 
 // ── NAV ──
 function go(t){
-  // Делегируем оболочке: переключение таба внутри мира «Деньги».
-  if(window.Shell){
-    if(window.Shell.world!=="money"){ window.setWorld("money"); }
-    window.Shell.moneyTab=t;
-    tab=t;
-    if(typeof window.goTab==="function"){ window.goTab(t); return; }
-  }
-  if(t===tab) return;
+  if(t===tab) return; // already on this tab
   tab=t;
+  document.querySelectorAll(".nb").forEach(b=>b.classList.remove("active"));
+  document.getElementById("nb-"+t).classList.add("active");
   render();
-  if(typeof window.paintNav==="function") window.paintNav();
 }
 
 // ── OVERLAYS ──
@@ -2304,15 +2280,9 @@ function histDonut(cats){
 }
 
 function render(){
-  // Если активен мир «Дом» — рендерит оболочка, а не финансовый render
-  if(window.Shell && window.Shell.world==="home"){
-    if(typeof window.renderHome==="function") window.renderHome();
-    if(typeof window.paintNav==="function") window.paintNav();
-    return;
-  }
-  // Шапка хаба видна всегда (оболочка), не зависит от таба
+  // Show header only on home tab
   const hdr=document.getElementById("app-header");
-  if(hdr) hdr.style.display="flex";
+  if(hdr) hdr.style.display=tab==="home"?"flex":"none";
 
   const inc=txs.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
   const exp=txs.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
@@ -2786,31 +2756,6 @@ function render(){
 
 render();
 </script>
-
-<!-- ░░ Лёгкий toast для оболочки ░░ -->
-<div id="hub-toast" style="position:fixed;left:50%;bottom:calc(var(--nav-h) + 22px + var(--safe-b));transform:translateX(-50%) translateY(20px);z-index:60;background:var(--ink);color:#fff;font-family:var(--font-body);font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:var(--r-pill);box-shadow:var(--sh-lg);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;max-width:80vw;text-align:center;"></div>
-<script>
-window.toast = function(msg){
-  const t = document.getElementById("hub-toast");
-  if(!t) return;
-  t.textContent = msg;
-  t.style.opacity = "1";
-  t.style.transform = "translateX(-50%) translateY(0)";
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(()=>{
-    t.style.opacity = "0";
-    t.style.transform = "translateX(-50%) translateY(20px)";
-  }, 1900);
-};
-</script>
-
-<!-- ░░ ДОМАШНИЙ ХАБ: оболочка + модули ░░ -->
-<script src="js/household.js"></script>
-<script src="js/shell.js"></script>
-<script src="js/home/overview.js"></script>
-<script src="js/home/stock.js"></script>
-<script src="js/home/tasks.js"></script>
-<script src="js/home/recipes.js"></script>
 </div><!-- end app-root -->
 </body>
 </html>

@@ -1,0 +1,110 @@
+/* ============================================================
+   THEME — Тёплый уют. Дизайн-токены домашнего хаба.
+   Два мира: 💰 Деньги (зелёный) · 🏠 Дом (терракот/глина)
+   ============================================================ */
+
+:root {
+  /* ── Базовая палитра ── */
+  --bg:          #f4f1ea;   /* тёплый песочный фон */
+  --bg-soft:     #efeadf;   /* чуть глубже для секций */
+  --surface:     #fffdf9;   /* карточки — кремовый, не чисто-белый */
+  --surface-2:   #f8f4ec;   /* вложенные плашки */
+  --line:        #e8e1d4;   /* тонкие линии */
+  --line-soft:   #f0ebe0;
+
+  /* ── Текст ── */
+  --ink:         #221f1a;   /* почти-чёрный тёплый */
+  --ink-2:       #6b6358;   /* вторичный */
+  --ink-3:       #a39a8c;   /* приглушённый */
+
+  /* ── Мир: Деньги (зелёный) ── */
+  --money:       #1a4a35;
+  --money-2:     #2f6a4c;
+  --money-soft:  #e7f0ea;
+  --money-grad:  linear-gradient(150deg, #1a4a35 0%, #245a40 55%, #2f7050 100%);
+
+  /* ── Мир: Дом (терракот/глина) ── */
+  --home:        #b5613e;
+  --home-2:      #cb7a52;
+  --home-soft:   #f6e7df;
+  --home-grad:   linear-gradient(150deg, #a8542f 0%, #b5613e 55%, #cb7a52 100%);
+
+  /* ── Акцент текущего мира (переопределяется на body) ── */
+  --accent:      var(--money);
+  --accent-2:    var(--money-2);
+  --accent-soft: var(--money-soft);
+  --accent-grad: var(--money-grad);
+
+  /* ── Семантика ── */
+  --pos:         #1a7a47;   /* доход / есть в наличии */
+  --pos-soft:    #e8f6ee;
+  --neg:         #c0563a;   /* расход / заканчивается */
+  --neg-soft:    #fbeae4;
+  --warn:        #d99a2b;   /* скоро кончится / дедлайн близко */
+  --warn-soft:   #fbf2dd;
+
+  /* ── Геометрия ── */
+  --r-sm:  12px;
+  --r-md:  18px;
+  --r-lg:  24px;
+  --r-xl:  30px;
+  --r-pill: 999px;
+
+  /* ── Тени ── */
+  --sh-sm:  0 1px 2px rgba(40,30,15,0.05);
+  --sh-md:  0 2px 8px rgba(40,30,15,0.06), 0 8px 24px rgba(40,30,15,0.05);
+  --sh-lg:  0 8px 40px rgba(40,30,15,0.12);
+  --sh-accent: 0 6px 18px rgba(26,74,53,0.28);
+
+  /* ── Типографика ── */
+  --font-body:    'Manrope', -apple-system, system-ui, sans-serif;
+  --font-display: 'Unbounded', 'Manrope', sans-serif;
+
+  /* ── Безопасные зоны / нав ── */
+  --nav-h:  68px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+/* Мир «Дом» — переключаем акцент на терракот */
+body[data-world="home"] {
+  --accent:      var(--home);
+  --accent-2:    var(--home-2);
+  --accent-soft: var(--home-soft);
+  --accent-grad: var(--home-grad);
+  --sh-accent:   0 6px 18px rgba(181,97,62,0.28);
+}
+
+/* ── Сброс / база ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  padding-bottom: calc(var(--nav-h) + 26px + var(--safe-b));
+  /* мягкая «бумажная» текстура из тонкого радиального шума */
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(181,97,62,0.04), transparent 45%),
+    radial-gradient(circle at 85% 8%, rgba(26,74,53,0.04), transparent 40%);
+  background-attachment: fixed;
+  transition: --accent 0.3s;
+}
+
+/* ── Типографические утилиты ── */
+.font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+.font-tiny {
+  font-family: var(--font-body);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.font-medium   { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold     { font-weight: 700; }
+
+/* ── Скрытие скроллбаров ── */
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; }

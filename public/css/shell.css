@@ -1,0 +1,202 @@
+/* ============================================================
+   SHELL — оболочка: шапка, переключатель миров,
+   контекстная нижняя навигация, общие компоненты.
+   ============================================================ */
+
+/* ── Контейнер контента ──
+   Легаси <style> грузится после нас и переопределяет #main,
+   поэтому поднимаем специфичность через body[data-world].        */
+body[data-world] #main {
+  padding: 14px 16px 0;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  max-width: 560px; margin: 0 auto;
+}
+
+/* ── Шапка хаба ── */
+.hub-header {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 18px 12px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(18px);
+  -webkit-backdrop-filter: saturate(1.4) blur(18px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.hub-header__title { display: flex; align-items: center; gap: 11px; }
+.hub-header__mark {
+  width: 42px; height: 42px; border-radius: 13px;
+  background: var(--accent-grad); box-shadow: var(--sh-accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; flex-shrink: 0;
+  transition: background .35s ease;
+}
+.hub-header__name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 17px; line-height: 1.05; color: var(--ink);
+}
+.hub-header__sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+/* пара аватаров (household members) */
+.hub-avatars { display: flex; align-items: center; }
+.hub-avatars img, .hub-avatars .av-fallback {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--surface); object-fit: cover;
+  background: var(--surface-2); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--ink-2);
+}
+.hub-avatars img:nth-child(2), .hub-avatars .av-fallback:nth-child(2) { margin-left: -10px; }
+
+/* ── Переключатель миров ── */
+.world-switch {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + 66px); z-index: 25;
+  display: flex; gap: 6px; padding: 5px;
+  margin: 12px auto 2px; max-width: 528px;
+  width: calc(100% - 32px);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+}
+.world-switch__btn {
+  flex: 1; border: none; cursor: pointer;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 14px; letter-spacing: -0.01em;
+  padding: 11px 8px; border-radius: var(--r-pill);
+  background: transparent; color: var(--ink-3);
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all .28s cubic-bezier(.34,1.4,.64,1);
+}
+.world-switch__btn .em { font-size: 16px; filter: grayscale(.5) opacity(.55); transition: filter .28s; }
+.world-switch__btn.on {
+  background: var(--surface); color: var(--ink);
+  box-shadow: var(--sh-md);
+}
+.world-switch__btn.on .em { filter: none; }
+.world-switch__btn:active { transform: scale(.96); }
+
+/* ── Нижняя навигация (контекстная) ── */
+.hub-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: center;
+  gap: 2px; padding: 7px 10px calc(10px + var(--safe-b));
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: saturate(1.5) blur(22px);
+  -webkit-backdrop-filter: saturate(1.5) blur(22px);
+  border-top: 1px solid var(--line-soft);
+}
+.hub-nav__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 528px;
+}
+/* специфичность через .hub-nav, чтобы переопределить легаси .nb */
+.hub-nav .nb {
+  flex: 1; border: none; background: transparent; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 0 2px; color: var(--ink-3);
+  font-family: var(--font-body); font-size: 10px; font-weight: 700;
+  letter-spacing: .01em; transition: color .2s, transform .14s;
+}
+.hub-nav .nb svg { width: 23px; height: 23px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.hub-nav .nb.on { color: var(--accent); }
+.hub-nav .nb.on svg { stroke: var(--accent); }
+.hub-nav .nb:active { transform: scale(.88); }
+
+/* центральная кнопка [+] */
+.nb-add {
+  width: 54px; height: 54px; flex: 0 0 54px; margin: 0 4px;
+  border-radius: 50%; border: none; cursor: pointer;
+  background: var(--accent-grad); box-shadow: var(--sh-accent);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .16s, background .35s;
+}
+.nb-add svg { width: 26px; height: 26px; stroke: #fff; stroke-width: 2.4; fill: none; }
+.nb-add:active { transform: scale(.9); }
+
+/* ── Общие компоненты ──
+   .card мира «Дом» — кремовая поверхность (переопределяем легаси
+   через body[data-world="home"] для нужной специфичности).         */
+body[data-world="home"] #main .card {
+  background: var(--surface); border-radius: var(--r-lg);
+  padding: 18px; box-shadow: var(--sh-md);
+  border: 1px solid var(--line-soft);
+}
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.section-head h2 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 17px; color: var(--ink); letter-spacing: -0.01em;
+}
+
+/* кнопка-таблетка добавления в секции */
+.add-pill {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: var(--accent); color: #fff; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 21px; line-height: 1; box-shadow: var(--sh-accent);
+  transition: transform .15s, background .35s;
+}
+.add-pill:active { transform: scale(.92); }
+
+/* ── Дашборд-виджеты мира «Дом» ── */
+.widget-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.widget {
+  position: relative; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg); padding: 16px 16px 18px;
+  cursor: pointer; box-shadow: var(--sh-sm);
+  transition: transform .18s, box-shadow .18s;
+  min-height: 118px; display: flex; flex-direction: column;
+}
+.widget:active { transform: scale(.97); box-shadow: var(--sh-md); }
+.widget__icon {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 23px; margin-bottom: auto;
+}
+.widget__title {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 15px; color: var(--ink); margin-top: 14px;
+}
+.widget__meta { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
+.widget__glow {
+  position: absolute; right: -30px; top: -30px;
+  width: 90px; height: 90px; border-radius: 50%;
+  opacity: .12; filter: blur(2px);
+}
+
+/* ── Заглушка раздела (Этапы 2-4) ── */
+.stub {
+  text-align: center; padding: 54px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.stub__badge {
+  font-family: var(--font-body); font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-soft);
+  padding: 6px 14px; border-radius: var(--r-pill);
+}
+.stub__ico {
+  width: 88px; height: 88px; border-radius: 26px;
+  background: var(--accent-soft); display: flex;
+  align-items: center; justify-content: center; font-size: 42px;
+}
+.stub h3 {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 21px; color: var(--ink); letter-spacing: -0.01em;
+}
+.stub p { font-size: 14px; color: var(--ink-2); max-width: 280px; line-height: 1.5; }
+
+/* ── Анимации появления ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.anim { animation: fadeUp .42s cubic-bezier(.34,1.2,.64,1) both; }
+.anim:nth-child(1) { animation-delay: .02s; }
+.anim:nth-child(2) { animation-delay: .07s; }
+.anim:nth-child(3) { animation-delay: .12s; }
+.anim:nth-child(4) { animation-delay: .17s; }
+.anim:nth-child(5) { animation-delay: .22s; }
+.anim:nth-child(6) { animation-delay: .27s; }
