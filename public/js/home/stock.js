@@ -23,7 +23,7 @@
   const PLACE = Object.fromEntries(PLACES.map(p => [p.id, p]));
   const UNITS = ["шт", "уп", "кг", "г", "л", "мл", "рул"];
 
-  let placeFilter = "all";   // "all" | <placeId>
+  let openPlace = null;      // null = обзор bento, иначе развёрнутое место
   let editId = null;         // редактируемая позиция в sheet
   const form = {};           // черновик формы
 
@@ -71,73 +71,110 @@
      РЕНДЕР
      ============================================================ */
   function render(main) {
+    if (openPlace) { renderDrawer(main, openPlace); return; }
+    renderOverview(main);
+  }
+
+  /* ── ОБЗОР: герой + bento-плитки мест + покупки ── */
+  function renderOverview(main) {
     const all = items();
     const low = all.filter(i => statusOf(i) === "low").length;
     const out = all.filter(i => statusOf(i) === "out").length;
     const expSoon = all.filter(i => { const e = expiryInfo(i); return e && e.days >= 0 && e.days <= 3; }).length;
-    const shopOpen = shopping().filter(s => !s.done).length;
+    const needBuy = [...all.filter(i => statusOf(i) === "out"), ...all.filter(i => statusOf(i) === "low")];
+    const alert = out + low > 0 || expSoon > 0;
 
-    const visible = placeFilter === "all" ? all : all.filter(i => i.place === placeFilter);
+    // имена того, что надо купить (до 4)
+    const buyNames = needBuy.slice(0, 4).map(i => i.name);
+    const extra = needBuy.length - buyNames.length;
+
+    const hero = `
+      <div class="stk-hero ${alert ? "alert" : "calm"} anim">
+        <div class="stk-hero__blob" style="width:150px;height:150px;right:-46px;top:-50px;"></div>
+        <div class="stk-hero__blob" style="width:80px;height:80px;right:70px;bottom:-30px;"></div>
+        <div class="stk-hero__eyebrow">${alert ? "Стоит пополнить" : "Запасы в порядке"}</div>
+        <div class="stk-hero__big">${alert
+          ? `${out + low} ${plural(out + low, "позиция", "позиции", "позиций")} на исходе`
+          : "Всё на месте 🌿"}</div>
+        ${buyNames.length ? `<div class="stk-hero__names">
+            ${buyNames.map(n => `<span class="stk-hero__pill">${escapeHtml(n)}</span>`).join("")}
+            ${extra > 0 ? `<span class="stk-hero__pill">+${extra}</span>` : ""}
+          </div>` : ""}
+        <div class="stk-hero__chips">
+          <div class="stk-hero__chip"><b>${all.length}</b><span>всего</span></div>
+          ${out ? `<div class="stk-hero__chip"><b>${out}</b><span>закончилось</span></div>` : ""}
+          ${expSoon ? `<div class="stk-hero__chip"><b>${expSoon}</b><span>скоро срок</span></div>` : ""}
+        </div>
+      </div>`;
+
+    // bento-плитки мест (только непустые + всегда плитка-добавление)
+    const tiles = PLACES.map(p => {
+      const arr = all.filter(i => i.place === p.id);
+      return bentoTile(p, arr);
+    }).filter(Boolean);
 
     main.innerHTML = `
-      <!-- Сводка -->
-      <div class="stk-summary anim">
-        <div class="stk-stat"><div class="stk-stat__num">${all.length}</div><div class="stk-stat__lbl">всего позиций</div></div>
-        <div class="stk-stat ${low ? "warn" : ""}"><div class="stk-stat__num">${low}</div><div class="stk-stat__lbl">заканчивается</div></div>
-        <div class="stk-stat ${out ? "neg" : ""}"><div class="stk-stat__num">${out}</div><div class="stk-stat__lbl">закончилось</div></div>
-        <div class="stk-stat ${expSoon ? "warn" : ""}"><div class="stk-stat__num">${expSoon}</div><div class="stk-stat__lbl">скоро срок</div></div>
-        <div class="stk-stat"><div class="stk-stat__num">${shopOpen}</div><div class="stk-stat__lbl">в покупках</div></div>
+      ${hero}
+      <div class="bento anim">
+        ${tiles.join("")}
+        <div class="bento-add" onclick="StockUI.add()">
+          <div class="plus">+</div><span>Добавить запас</span>
+        </div>
       </div>
-
-      <!-- Рейка мест -->
-      <div class="stk-places anim">
-        ${placeChip("all", "Всё", all.length)}
-        ${PLACES.map(p => placeChip(p.id, p.name, all.filter(i => i.place === p.id).length)).join("")}
-      </div>
-
-      <!-- Полки -->
-      <div class="anim">${renderShelves(visible)}</div>
-
-      <!-- Список покупок -->
       <div class="anim">${renderShopping()}</div>
     `;
   }
 
-  function placeChip(id, name, n) {
-    const on = placeFilter === id;
-    const color = id === "all" ? "var(--home)" : (window.HOME_ICON_COLOR[id] || "var(--home)");
-    const icon = id === "all"
-      ? `<span style="font-size:14px;">🗂️</span>`
-      : (window.duoIcon ? window.duoIcon(id, 18) : "");
-    const dotBg = on ? "" : (id === "all" ? "var(--home-soft)" : (window.HOME_ICON_COLOR[id] || "var(--home)") + "1a");
-    return `<div class="stk-place-chip ${on ? "on" : ""}" style="${on ? `background:${color};` : ""}" onclick="StockUI.filter('${id}')">
-      <span class="dot" style="background:${dotBg};">${icon}</span>${name}${n ? ` <span style="opacity:.7;font-weight:700;">${n}</span>` : ""}</div>`;
+  function bentoTile(p, arr) {
+    const c1 = `var(--pl-${p.id})`, c2 = `var(--pl-${p.id}-2)`;
+    const need = arr.filter(i => statusOf(i) === "low" || statusOf(i) === "out").length;
+    // до 6 точек-индикаторов по статусу
+    const order = { out: 0, low: 1, ok: 2 };
+    const dots = arr.slice().sort((a, b) => order[statusOf(a)] - order[statusOf(b)])
+      .slice(0, 6).map(i => `<i class="${statusOf(i)}"></i>`).join("");
+    const ico = window.duoIcon ? window.duoIcon(p.id, 22) : "";
+    const metaTxt = arr.length
+      ? `${arr.length} ${plural(arr.length, "позиция", "позиции", "позиций")}`
+      : "пусто — добавить";
+    return `
+      <div class="bento-tile" style="--c1:${c1};--c2:${c2};" onclick="StockUI.openPlace('${p.id}')">
+        <div class="bento-tile__deco"></div><div class="bento-tile__deco2"></div>
+        ${need ? `<div class="bento-tile__alert">⚠ ${need}</div>` : ""}
+        <div class="bento-tile__ico">${ico}</div>
+        <div class="bento-tile__name">${p.name}</div>
+        <div class="bento-tile__meta">
+          <span>${metaTxt}</span>
+          ${dots ? `<span class="bento-dots">${dots}</span>` : ""}
+        </div>
+      </div>`;
   }
 
-  function renderShelves(list) {
-    if (list.length === 0) {
-      return `<div class="stk-empty">Пусто. Нажми <b>+</b> внизу, чтобы добавить запас.</div>`;
-    }
-    // группируем по местам, в фиксированном порядке
-    const groups = PLACES.map(p => ({ p, arr: list.filter(i => i.place === p.id) })).filter(g => g.arr.length);
-    return groups.map(({ p, arr }) => {
-      // сортировка: out → low → ok, внутри по имени
-      const order = { out: 0, low: 1, ok: 2 };
-      arr.sort((a, b) => (order[statusOf(a)] - order[statusOf(b)]) || a.name.localeCompare(b.name, "ru"));
-      const color = window.HOME_ICON_COLOR[p.id] || "var(--home)";
-      return `
-        <div class="stk-shelf">
-          <div class="stk-shelf__head">
-            ${window.duoTile ? window.duoTile(p.id, 22, 38) : ""}
-            <div class="stk-shelf__title">${p.name}</div>
-            <div class="stk-shelf__count">${arr.length}</div>
-          </div>
-          ${arr.map(it => itemRow(it, color)).join("")}
-        </div>`;
-    }).join("");
+  /* ── DRAWER: развёрнутое место со списком позиций ── */
+  function renderDrawer(main, placeId) {
+    const p = PLACE[placeId];
+    const arr = items().filter(i => i.place === placeId);
+    const order = { out: 0, low: 1, ok: 2 };
+    arr.sort((a, b) => (order[statusOf(a)] - order[statusOf(b)]) || a.name.localeCompare(b.name, "ru"));
+    const color = `var(--pl-${placeId})`;
+
+    main.innerHTML = `
+      <div class="stk-drawer">
+        <div class="stk-drawer__head">
+          <button class="stk-drawer__back" onclick="StockUI.closePlace()">←</button>
+          <div class="stk-drawer__title">${p.name}</div>
+          <button class="stk-drawer__add" style="background:${color};" onclick="StockUI.add()">
+            <span style="font-size:18px;line-height:1;">+</span> Добавить
+          </button>
+        </div>
+        ${arr.length
+          ? arr.map(it => itemRow(it)).join("")
+          : `<div class="stk-empty">В этом месте пока пусто.<br>Нажми «Добавить».</div>`}
+      </div>
+      <div class="anim" style="margin-top:8px;">${renderShopping()}</div>
+    `;
   }
 
-  function itemRow(it, placeColor) {
+  function itemRow(it) {
     const st = statusOf(it);
     const exp = expiryInfo(it);
     const isQty = it.track === "qty";
@@ -145,27 +182,21 @@
     const right = isQty
       ? `<div class="stk-qty" onclick="event.stopPropagation()">
            <button onclick="StockUI.qty('${it.id}',-1)">−</button>
-           <div><span class="stk-qty__val">${(+it.qty || 0)}</span></div>
+           <span class="stk-qty__val">${(+it.qty || 0)}</span>
            <button onclick="StockUI.qty('${it.id}',1)">+</button>
          </div>`
-      : `<div class="stk-status" onclick="event.stopPropagation()">
+      : `<div class="stk-seg" onclick="event.stopPropagation()">
            ${["ok","low","out"].map(s =>
-             `<div class="stk-dot ${s} ${st === s ? "on" : ""}" title="${s}" onclick="StockUI.setStatus('${it.id}','${s}')"><i></i></div>`).join("")}
+             `<button class="${s} ${st === s ? "on" : ""}" onclick="StockUI.setStatus('${it.id}','${s}')"><i></i></button>`).join("")}
          </div>`;
 
     const meta = [];
-    if (isQty) {
-      meta.push(`<span>${(+it.qty || 0)} ${it.unit || "шт"}${it.min ? ` · мин. ${it.min}` : ""}</span>`);
-      if (st === "low") meta.push(`<span class="stk-badge low">заканчивается</span>`);
-      if (st === "out") meta.push(`<span class="stk-badge out">нет</span>`);
-    } else {
-      if (st === "low") meta.push(`<span class="stk-badge low">мало</span>`);
-      if (st === "out") meta.push(`<span class="stk-badge out">закончилось</span>`);
-    }
+    if (isQty) meta.push(`<span>${(+it.qty || 0)} ${it.unit || "шт"}${it.min ? ` · мин ${it.min}` : ""}</span>`);
     if (exp) meta.push(`<span class="stk-badge ${exp.cls}">⏱ ${exp.txt}</span>`);
 
     return `
-      <div class="stk-item ${st === "out" ? "is-out" : ""}" style="--place-c:${placeColor};" onclick="StockUI.edit('${it.id}')">
+      <div class="stk-item ${st === "out" ? "is-out" : ""}" onclick="StockUI.edit('${it.id}')">
+        <div class="stk-item__pulse ${st}"></div>
         <div class="stk-item__body">
           <div class="stk-item__name">${escapeHtml(it.name)}</div>
           ${meta.length ? `<div class="stk-item__meta">${meta.join("")}</div>` : ""}
@@ -189,9 +220,14 @@
         </div>`).join("")
       : `<div style="text-align:center;color:var(--ink-3);font-size:13px;padding:14px 0;">Список пуст. Что заканчивается — добавится сюда автоматически.</div>`;
 
+    const openCount = list.filter(s => !s.done).length;
     return `
       <div class="shop-card">
-        <div class="section-head"><h2>🛒 Купить</h2></div>
+        <div class="shop-card__head">
+          <span style="font-size:18px;">🛒</span>
+          <h2>Список покупок</h2>
+          ${openCount ? `<span class="shop-card__count">${openCount}</span>` : ""}
+        </div>
         ${rows}
         <div class="shop-add">
           <input id="shop-input" type="text" placeholder="Добавить вручную…"
@@ -209,7 +245,8 @@
     if (main && window.Shell && window.Shell.world === "home" && window.Shell.homeTab === "stock") render(main);
   }
 
-  function filter(id) { placeFilter = id; rerender(); }
+  function openPlaceFn(id) { openPlace = id; rerender(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function closePlace() { openPlace = null; rerender(); }
 
   function setStatus(id, s) {
     const obj = stockObj(); if (!obj[id]) return;
@@ -287,7 +324,7 @@
     const it = id ? stockObj()[id] : null;
     Object.assign(form, {
       name:   it ? it.name : "",
-      place:  it ? it.place : (placeFilter !== "all" ? placeFilter : "fridge"),
+      place:  it ? it.place : (openPlace || "fridge"),
       track:  it ? (it.track || "status") : "status",
       status: it ? (it.status || "ok") : "ok",
       qty:    it && it.qty != null ? it.qty : 1,
@@ -445,7 +482,8 @@
 
   /* ── Публичный API ── */
   window.StockUI = {
-    filter, setStatus, qty, edit: openSheet,
+    openPlace: openPlaceFn, closePlace, add: () => openSheet(null),
+    setStatus, qty, edit: openSheet,
     toggleShop, delShop, addShopFromInput,
     formPlace, formTrack, formStatus, save, remove, close: closeSheet
   };

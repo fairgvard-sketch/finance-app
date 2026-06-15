@@ -24,49 +24,82 @@
   }
 
   // Вызывается после авторизации (передаём firebase user и db).
+  // Устойчиво к security-rules: пробуем общий путь household/, при
+  // отказе откатываемся на users/{uid}/household (его правила уже
+  // разрешают). Так сохранение работает всегда, а на общий путь
+  // легко перейти, когда правила откроют household/.
   async function initHousehold(user, db) {
     if (!user || !db) return;
+    const me = {
+      name: (user.displayName || "").split(" ")[0] || "Я",
+      photo: user.photoURL || "",
+      email: user.email || ""
+    };
+
+    let ref = null;
+
+    // 1) Пытаемся работать через общий household/{hid}
     try {
       const uref = db.ref("users/" + user.uid + "/householdId");
       const snap = await uref.get();
       let hid = snap.exists() ? snap.val() : null;
 
       if (!hid) {
-        // Создаём новый household с этим пользователем как участником
         hid = genId();
+        // пробная запись — упадёт, если правила запрещают household/
         await db.ref("household/" + hid).set({
-          createdBy: user.uid,
-          createdAt: Date.now(),
-          members: { [user.uid]: {
-            name: (user.displayName || "").split(" ")[0] || "Я",
-            photo: user.photoURL || "",
-            email: user.email || ""
-          } }
+          createdBy: user.uid, createdAt: Date.now(),
+          members: { [user.uid]: me }
         });
         await uref.set(hid);
+      } else {
+        // убеждаемся, что доступ к узлу есть (read проверит правила)
+        await db.ref("household/" + hid).child("members").get();
       }
       Household.id = hid;
-      Household.ref = db.ref("household/" + hid);
-
-      // Живая подписка на общие данные
-      Household.ref.on("value", (s) => {
-        Household.data = s.val() || { members: {} };
-        renderHouseholdHeader();
-        // Если мы в мире «Дом» — перерисовать активный раздел
-        if (window.Shell && window.Shell.world === "home" && typeof window.renderHome === "function") {
-          window.renderHome();
-        }
-      });
+      ref = db.ref("household/" + hid);
+      Household.mode = "shared";
     } catch (e) {
-      console.log("[household] init error", e);
+      // 2) Fallback: личный узел users/{uid}/household
+      console.warn("[household] shared path unavailable, falling back to users/{uid}/household:", e && e.code || e);
+      try {
+        ref = db.ref("users/" + user.uid + "/household");
+        // гарантируем, что есть запись об участнике
+        await ref.child("members/" + user.uid).set(me).catch(()=>{});
+        Household.id = "self:" + user.uid;
+        Household.mode = "personal";
+      } catch (e2) {
+        console.error("[household] init failed completely:", e2);
+        return;
+      }
     }
+
+    Household.ref = ref;
+
+    // Живая подписка на общие данные
+    ref.on("value", (s) => {
+      Household.data = s.val() || { members: {} };
+      renderHouseholdHeader();
+      if (window.Shell && window.Shell.world === "home" && typeof window.renderHome === "function") {
+        window.renderHome();
+      }
+    }, (err) => {
+      console.error("[household] subscription error:", err && err.code || err);
+    });
   }
   window.initHousehold = initHousehold;
 
-  // Сохранить участка общих данных (stock/tasks/recipes) — для этапов 2-4
+  // Сохранить участок общих данных (stock/tasks/recipes/shopping).
   function saveHousehold(section, value) {
-    if (!Household.ref) return;
-    Household.ref.child(section).set(value).catch(e => console.log("[household] save", e));
+    if (!Household.ref) {
+      console.error("[household] saveHousehold called before init (ref is null)");
+      if (window.toast) window.toast("Нет связи с базой — данные не сохранены");
+      return;
+    }
+    Household.ref.child(section).set(value).catch(e => {
+      console.error("[household] save error:", e && e.code || e);
+      if (window.toast) window.toast("Ошибка сохранения: " + (e && e.code || ""));
+    });
   }
   window.saveHousehold = saveHousehold;
 

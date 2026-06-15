@@ -43,6 +43,13 @@
   --warn:        #d99a2b;   /* скоро кончится / дедлайн близко */
   --warn-soft:   #fbf2dd;
 
+  /* ── Цвета мест хранения (для Bento-плиток) ── */
+  --pl-fridge:     #3f86c4;  --pl-fridge-2:     #5aa0d8;
+  --pl-freezer:    #2f9ec4;  --pl-freezer-2:    #54bfe0;
+  --pl-pantry:     #c47a3e;  --pl-pantry-2:     #d99657;
+  --pl-cleaning:   #2f9b80;  --pl-cleaning-2:   #46b89a;
+  --pl-essentials: #c98a3f;  --pl-essentials-2: #dba35c;
+
   /* ── Геометрия ── */
   --r-sm:  12px;
   --r-md:  18px;
