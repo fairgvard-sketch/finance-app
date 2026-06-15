@@ -13,8 +13,9 @@
 (function () {
   "use strict";
 
-  const CHORE_EMOJI = ["🍽️","🗑️","🧹","🧺","🛒","🐕","🪴","🚽","🛏️","🍳","🧴","🧽"];
-  const DUTY_EMOJI  = ["🍽️","🚿","🛏️","🧹","🪴","🐈","👕","💡"];
+  // ключи duotone-иконок из icons.js (HOME_ICONS) — НЕ эмодзи
+  const CHORE_ICONS = ["dishes","trash","broom","laundry","cook","cart","plant","pet","bath","iron"];
+  const DUTY_ICONS  = ["dishes","bath","bed","broom","plant","pet","laundry","cook"];
 
   let editType = null;   // 'task' | 'chore' | 'duty'
   let editId = null;
@@ -119,9 +120,10 @@
     const nextUid = rot[((c.turnIdx || 0) + 1) % rot.length];
     const col = colorOf(curUid);
     const mine = curUid === myUid;
+    const icoKey = c.icon || "broom";
     return `
       <div class="tsk-chore ${mine ? "mine" : ""}" style="--c:${col};" onclick="TasksUI.edit('chore','${c.id}')">
-        <div class="tsk-chore__emoji">${c.emoji || "🔁"}</div>
+        <div class="tsk-chore__emoji">${window.duoIcon ? window.duoIcon(icoKey, 24, col) : ""}</div>
         <div class="tsk-chore__body">
           <div class="tsk-chore__title">${escapeHtml(c.title)}</div>
           <div class="tsk-chore__turn">
@@ -185,9 +187,10 @@
 
   function dutyCard(d) {
     const col = colorOf(d.owner);
+    const icoKey = d.icon || "broom";
     return `
       <div class="duty" style="--c:${col};" onclick="TasksUI.edit('duty','${d.id}')">
-        <div class="duty__emoji">${d.emoji || "🧹"}</div>
+        <div class="duty__emoji">${window.duoTile ? window.duoTile(icoKey, 22, 42, col) : ""}</div>
         <div class="duty__title">${escapeHtml(d.title)}</div>
         <div class="duty__owner">
           <span class="duty__ownerdot" style="background:${col};">${nameOf(d.owner).slice(0,1).toUpperCase()}</span>
@@ -238,11 +241,12 @@
     let src = null;
     if (id) src = (type === "task" ? tasksObj() : type === "chore" ? choresObj() : dutiesObj())[id];
 
+    const defIcon = type === "duty" ? DUTY_ICONS[0] : CHORE_ICONS[0];
     Object.assign(form, {
       title: src ? src.title : "",
       assignee: src ? (src.assignee || m[0].uid) : m[0].uid,
       due: src ? (src.due || "") : "",
-      emoji: src ? (src.emoji || (type === "duty" ? DUTY_EMOJI[0] : CHORE_EMOJI[0])) : (type === "duty" ? DUTY_EMOJI[0] : CHORE_EMOJI[0]),
+      icon: src ? (src.icon || defIcon) : defIcon,
       owner: src ? (src.owner || m[0].uid) : m[0].uid,
       rotation: src && src.rotation ? src.rotation.slice() : m.map(x => x.uid)
     });
@@ -275,7 +279,7 @@
       ${editType !== "task" ? `
       <div class="hub-field">
         <label>Иконка</label>
-        <div class="hub-chiprow" id="tf-emoji">${emojiChips()}</div>
+        <div class="hub-chiprow" id="tf-emoji">${iconChips()}</div>
       </div>` : ""}
 
       ${editType === "chore" ? renderRotationField() : renderAssigneeField()}
@@ -302,10 +306,13 @@
       : "напр. Кухня";
   }
 
-  function emojiChips() {
-    const set = editType === "duty" ? DUTY_EMOJI : CHORE_EMOJI;
-    return set.map(e => `<div class="hub-chip ${form.emoji === e ? "on" : ""}" style="${form.emoji === e ? "background:var(--home);" : ""}"
-      onclick="TasksUI.formEmoji('${e}')"><span style="font-size:18px;">${e}</span></div>`).join("");
+  function iconChips() {
+    const set = editType === "duty" ? DUTY_ICONS : CHORE_ICONS;
+    return set.map(k => {
+      const on = form.icon === k;
+      return `<div class="hub-chip ${on ? "on" : ""}" style="${on ? "background:var(--home);" : ""}padding:8px;"
+        onclick="TasksUI.formIcon('${k}')">${window.duoIcon ? window.duoIcon(k, 22, on ? "#fff" : null) : ""}</div>`;
+    }).join("");
   }
 
   function renderAssigneeField() {
@@ -348,9 +355,9 @@
     const t = document.getElementById("tf-title"); if (t) form.title = t.value;
     const d = document.getElementById("tf-due"); if (d) form.due = d.value;
   }
-  function formEmoji(e) {
-    form.emoji = e;
-    document.getElementById("tf-emoji").innerHTML = emojiChips();
+  function formIcon(k) {
+    form.icon = k;
+    document.getElementById("tf-emoji").innerHTML = iconChips();
   }
   function formAssignee(uid) {
     if (editType === "duty") form.owner = uid; else form.assignee = uid;
@@ -375,11 +382,11 @@
       rec = { title: form.title.trim(), assignee: form.assignee, due: form.due || "",
               done: (obj[id] && obj[id].done) || false, ts: (obj[id] && obj[id].ts) || Date.now() };
     } else if (editType === "chore") {
-      rec = { title: form.title.trim(), emoji: form.emoji, rotation: form.rotation,
+      rec = { title: form.title.trim(), icon: form.icon, rotation: form.rotation,
               turnIdx: (obj[id] && obj[id].turnIdx) || 0, lastDone: (obj[id] && obj[id].lastDone) || 0,
               lastDoneBy: (obj[id] && obj[id].lastDoneBy) || "", ts: (obj[id] && obj[id].ts) || Date.now() };
     } else {
-      rec = { title: form.title.trim(), emoji: form.emoji, owner: form.owner, ts: (obj[id] && obj[id].ts) || Date.now() };
+      rec = { title: form.title.trim(), icon: form.icon, owner: form.owner, ts: (obj[id] && obj[id].ts) || Date.now() };
     }
     obj[id] = rec;
     save(section, obj);
@@ -404,7 +411,7 @@
   /* ── Публичный API ── */
   window.TasksUI = {
     add, edit: openSheet, doneChore, toggleTask,
-    formEmoji, formAssignee, save: saveForm, remove, close: closeSheet
+    formIcon, formAssignee, save: saveForm, remove, close: closeSheet
   };
 
   /* ── Контракт модуля ── */
