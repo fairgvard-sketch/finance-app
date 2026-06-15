@@ -54,54 +54,65 @@
   // включится общий режим: достаточно поставить флаг
   //   localStorage.setItem("hub.sharedHousehold","1")
   // — тогда данные станут общими для пары.
-  async function initHousehold(user, db) {
-    if (!user || !db) return;
-    window._authUid = user.uid;   // кто я (для очереди дел и пр.)
-    const me = {
+  // храним ссылки для pairing-операций
+  let _db = null, _user = null, _me = null;
+
+  function meObj(user, colorIdx) {
+    return {
       name: (user.displayName || "").split(" ")[0] || "Я",
       photo: user.photoURL || "",
       email: user.email || "",
-      color: MEMBER_COLORS[0]     // первый участник — зелёный
+      color: MEMBER_COLORS[(colorIdx || 0) % MEMBER_COLORS.length]
     };
+  }
 
-    const tryShared = localStorage.getItem("hub.sharedHousehold") === "1";
-    let ref = null;
+  async function initHousehold(user, db) {
+    if (!user || !db) return;
+    window._authUid = user.uid;   // кто я (для очереди дел и пр.)
+    _db = db; _user = user;
+    _me = meObj(user, 0);
 
-    if (tryShared) {
-      // Общий household/{hid} — только если правила уже открыты
-      try {
-        const uref = db.ref("users/" + user.uid + "/householdId");
-        const snap = await uref.get();
-        let hid = snap.exists() ? snap.val() : null;
-        if (!hid) {
-          hid = genId();
-          await db.ref("household/" + hid).set({
-            createdBy: user.uid, createdAt: Date.now(),
-            members: { [user.uid]: me }
-          });
-          await uref.set(hid);
-        }
-        Household.id = hid;
-        Household.mode = "shared";
-        ref = db.ref("household/" + hid);
-      } catch (e) {
-        console.warn("[household] shared недоступен, личный путь:", e && e.code || e);
-      }
+    let hid = null;
+    try {
+      const snap = await db.ref("users/" + user.uid + "/householdId").get();
+      hid = snap.exists() ? snap.val() : null;
+    } catch (e) { console.warn("[household] read householdId:", e && e.code || e); }
+
+    if (hid) {
+      // Общий режим: есть household — работаем с ним
+      attachShared(hid);
+      // подстрахуемся, что мы есть в members (и цвет назначен)
+      ensureMembership(hid);
+    } else {
+      // Личный режим по умолчанию (users/{uid}/household)
+      attachPersonal();
     }
+  }
+  window.initHousehold = initHousehold;
 
-    // Личный путь (по умолчанию и как fallback)
-    if (!ref) {
-      ref = db.ref("users/" + user.uid + "/household");
-      Household.id = "self:" + user.uid;
-      Household.mode = "personal";
-      // гарантируем запись об участнике (для аватаров)
-      ref.child("members/" + user.uid).set(me).catch(e =>
-        console.warn("[household] member write:", e && e.code || e));
-    }
+  function attachShared(hid) {
+    detach();
+    Household.id = hid;
+    Household.mode = "shared";
+    Household.ref = _db.ref("household/" + hid);
+    subscribe(Household.ref);
+  }
 
-    Household.ref = ref;
+  function attachPersonal() {
+    detach();
+    Household.id = "self:" + _user.uid;
+    Household.mode = "personal";
+    Household.ref = _db.ref("users/" + _user.uid + "/household");
+    Household.ref.child("members/" + _user.uid).set(_me).catch(e =>
+      console.warn("[household] member write:", e && e.code || e));
+    subscribe(Household.ref);
+  }
 
-    // Живая подписка на общие данные
+  function detach() {
+    if (Household.ref) { try { Household.ref.off(); } catch (e) {} }
+  }
+
+  function subscribe(ref) {
     ref.on("value", (s) => {
       Household.data = s.val() || { members: {} };
       renderHouseholdHeader();
@@ -112,7 +123,98 @@
       console.error("[household] subscription error:", err && err.code || err);
     });
   }
-  window.initHousehold = initHousehold;
+
+  // Убедиться, что текущий пользователь — участник household (с цветом)
+  async function ensureMembership(hid) {
+    try {
+      const mref = _db.ref("household/" + hid + "/members");
+      const snap = await mref.get();
+      const members = snap.val() || {};
+      if (!members[_user.uid]) {
+        const idx = Object.keys(members).length;   // назначаем следующий цвет
+        await mref.child(_user.uid).set(meObj(_user, idx));
+      }
+    } catch (e) { console.warn("[household] ensureMembership:", e && e.code || e); }
+  }
+
+  /* ============================================================
+     PAIRING — приглашение партнёра по короткому коду
+     ============================================================ */
+
+  // Сгенерировать invite-код. Если мы ещё в личном режиме — сначала
+  // создаём общий household и мигрируем туда личные данные.
+  async function createInvite() {
+    if (!_db || !_user) throw new Error("not ready");
+    let hid = Household.id && Household.mode === "shared" ? Household.id : null;
+
+    if (!hid) {
+      // создаём общий household из текущих личных данных
+      hid = genId();
+      const personalSnap = await _db.ref("users/" + _user.uid + "/household").get().catch(() => null);
+      const personal = (personalSnap && personalSnap.val()) || {};
+      const payload = {
+        createdBy: _user.uid, createdAt: Date.now(),
+        members: { [_user.uid]: meObj(_user, 0) },
+        stock: personal.stock || {}, shopping: personal.shopping || {},
+        chores: personal.chores || {}, tasks: personal.tasks || {},
+        duties: personal.duties || {}, recipes: personal.recipes || {}
+      };
+      await _db.ref("household/" + hid).set(payload);
+      await _db.ref("users/" + _user.uid + "/householdId").set(hid);
+      attachShared(hid);
+    }
+
+    const code = genCode();
+    await _db.ref("invites/" + code).set({ hid, by: _user.uid, ts: Date.now() });
+    return code;
+  }
+  window.createInvite = createInvite;
+
+  // Присоединиться к household по коду
+  async function joinByCode(rawCode) {
+    if (!_db || !_user) throw new Error("not ready");
+    const code = (rawCode || "").trim().toUpperCase();
+    if (!code) throw new Error("Введите код");
+
+    const invSnap = await _db.ref("invites/" + code).get();
+    if (!invSnap.exists()) throw new Error("Код не найден");
+    const inv = invSnap.val();
+    const hid = inv.hid;
+    if (!hid) throw new Error("Неверный код");
+    if (inv.by === _user.uid) throw new Error("Это ваш собственный код");
+
+    // добавляем себя в members (цвет — следующий свободный)
+    const mref = _db.ref("household/" + hid + "/members");
+    const msnap = await mref.get();
+    const members = msnap.val() || {};
+    const idx = Object.keys(members).length;
+    await mref.child(_user.uid).set(meObj(_user, idx));
+    await _db.ref("users/" + _user.uid + "/householdId").set(hid);
+
+    attachShared(hid);
+    // код одноразовый — гасим
+    _db.ref("invites/" + code).remove().catch(() => {});
+    return true;
+  }
+  window.joinByCode = joinByCode;
+
+  // Выйти из общего household, вернуться в личный режим
+  async function leaveHousehold() {
+    if (!_db || !_user) return;
+    const hid = Household.id;
+    if (Household.mode === "shared" && hid) {
+      await _db.ref("household/" + hid + "/members/" + _user.uid).remove().catch(() => {});
+      await _db.ref("users/" + _user.uid + "/householdId").remove().catch(() => {});
+    }
+    attachPersonal();
+  }
+  window.leaveHousehold = leaveHousehold;
+
+  function genCode() {
+    const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // без похожих 0/O/1/I
+    let s = ""; for (let i = 0; i < 6; i++) s += A[Math.floor(Math.random() * A.length)];
+    return s;
+  }
 
   // Сохранить участок общих данных (stock/tasks/recipes/shopping).
   function saveHousehold(section, value) {
@@ -128,18 +230,20 @@
   }
   window.saveHousehold = saveHousehold;
 
-  // Рисуем аватары участников в шапке
+  // Рисуем аватары участников в шапке (+ кнопка-добавление если соло)
   function renderHouseholdHeader() {
     const box = document.getElementById("hub-avatars");
     if (!box) return;
     const members = (Household.data && Household.data.members) || {};
     const arr = Object.values(members).slice(0, 2);
-    if (arr.length === 0) { box.innerHTML = ""; return; }
-    box.innerHTML = arr.map(m =>
+    let html = arr.map(m =>
       m.photo
         ? `<img src="${m.photo}" alt="${m.name || ""}">`
         : `<div class="av-fallback">${(m.name || "?").slice(0, 1).toUpperCase()}</div>`
     ).join("");
+    // если партнёра ещё нет — пунктирный «+» как приглашение подключить
+    if (arr.length < 2) html += `<div class="av-add">+</div>`;
+    box.innerHTML = html;
   }
   window.renderHouseholdHeader = renderHouseholdHeader;
 

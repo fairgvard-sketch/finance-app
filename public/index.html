@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="css/stock.css">
 <link rel="stylesheet" href="css/tasks.css">
 <link rel="stylesheet" href="css/recipes.css">
+<link rel="stylesheet" href="css/pairing.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-bottom:calc(94px + env(safe-area-inset-bottom));min-height:100vh;}
@@ -211,7 +212,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
-    <div id="hub-avatars" class="hub-avatars"></div>
+    <div id="hub-avatars" class="hub-avatars" onclick="if(window.Pairing)Pairing.open()" title="Наш дом"></div>
     <div style="cursor:pointer;display:flex;align-items:center;" onclick="signOutUser()" title="Выйти">
       <img id="user-avatar" style="display:none;width:0;height:0;" src="">
       <span id="user-name" style="display:none;"></span>
@@ -2811,6 +2812,7 @@ window.toast = function(msg){
 
 <!-- ░░ ДОМАШНИЙ ХАБ: оболочка + модули ░░ -->
 <script src="js/household.js"></script>
+<script src="js/pairing.js"></script>
 <script src="js/shell.js"></script>
 <script src="js/home/icons.js"></script>
 <script src="js/home/overview.js"></script>

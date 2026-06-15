@@ -1,0 +1,51 @@
+/* ============================================================
+   PAIRING — подключение партнёра (sheet из шапки).
+   ============================================================ */
+
+.hub-avatars { cursor: pointer; }
+.hub-avatars .av-add {
+  width: 32px; height: 32px; border-radius: 50%; margin-left: -10px;
+  border: 2px dashed var(--line); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-3); font-size: 18px; font-weight: 600;
+}
+
+/* герой-блок «вы вместе» */
+.pr-hero {
+  text-align: center; padding: 8px 0 18px;
+}
+.pr-hero__avs { display: flex; justify-content: center; align-items: center; gap: -6px; margin-bottom: 12px; }
+.pr-hero__av {
+  width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--bg); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 24px; color: #fff;
+}
+.pr-hero__av:nth-child(2) { margin-left: -16px; }
+.pr-hero__title { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--ink); }
+.pr-hero__sub { font-size: 13.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+
+/* код приглашения */
+.pr-code {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--home-soft); border: 1.5px dashed var(--home);
+  border-radius: var(--r-lg); padding: 18px; margin: 6px 0 12px;
+}
+.pr-code__val {
+  font-family: var(--font-display); font-weight: 700; font-size: 30px;
+  letter-spacing: .14em; color: var(--home);
+}
+.pr-hint { font-size: 12.5px; color: var(--ink-3); text-align: center; line-height: 1.5; margin-bottom: 6px; }
+
+.pr-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--ink-3); font-size: 12px; font-weight: 600; }
+.pr-divider::before, .pr-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.pr-members { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; }
+.pr-member { display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+  background: var(--surface); border: 1px solid var(--line-soft); border-radius: var(--r-md); }
+.pr-member__av { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+.pr-member__name { flex: 1; font-weight: 600; font-size: 14.5px; color: var(--ink); }
+.pr-member__you { font-size: 11px; font-weight: 700; color: var(--home); background: var(--home-soft);
+  padding: 2px 9px; border-radius: var(--r-pill); }
+
+.pr-error { color: var(--neg); font-size: 13px; text-align: center; margin-top: 8px; min-height: 18px; }
