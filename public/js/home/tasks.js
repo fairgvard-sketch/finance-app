@@ -76,72 +76,62 @@
     const duties = arr(dutiesObj());
 
     main.innerHTML = `
-      ${renderTurnHero(chores)}
-      ${chores.length > 1 ? `<div class="tsk-chores anim">${chores.map(choreChip).join("")}</div>` : ""}
+      ${renderChores(chores)}
       ${renderBalance(chores, tasks, duties)}
       ${renderTasks(tasks)}
       ${renderDuties(duties)}
     `;
   }
 
-  /* ── ГЕРОЙ: чья очередь (берём первое chore как «дежурное») ── */
-  function renderTurnHero(chores) {
-    if (chores.length === 0) {
-      return `
-        <div class="tsk-turn anim" style="--turn-c:#2f6a4c;">
-          <div class="tsk-turn__blob" style="width:150px;height:150px;right:-46px;top:-50px;"></div>
-          <div class="tsk-turn__eyebrow">Очередь дел</div>
-          <div class="tsk-turn__row">
-            <div class="tsk-turn__who">
-              <div class="tsk-turn__name">Настройте дежурство</div>
-              <div class="tsk-turn__chore">Мытьё посуды, уборка, мусор — с честным чередованием</div>
-            </div>
-          </div>
-          <div class="tsk-turn__next" style="margin-top:16px;">
-            <button class="tsk-turn__done" style="color:#2f6a4c;" onclick="TasksUI.add('chore')">+ Добавить дежурство</button>
-          </div>
-        </div>`;
-    }
-    const c = chores[0];
-    const rot = (c.rotation && c.rotation.length) ? c.rotation : members().map(m => m.uid);
-    const curUid = rot[(c.turnIdx || 0) % rot.length];
-    const nextUid = rot[((c.turnIdx || 0) + 1) % rot.length];
-    const col = colorOf(curUid);
-
+  /* ── СЕКЦИЯ «ДЕЖУРСТВА»: равноправные карточки, своя очередь у каждой ── */
+  function renderChores(chores) {
+    const myUid = (window.Household && window.Household.me && window.Household.me()) || members()[0].uid;
+    // сортировка: сначала «сейчас моя очередь», потом остальные
+    const sorted = chores.slice().sort((a, b) => {
+      const am = isMyTurn(a, myUid) ? 0 : 1;
+      const bm = isMyTurn(b, myUid) ? 0 : 1;
+      return (am - bm) || (a.ts || 0) - (b.ts || 0);
+    });
+    const body = sorted.length
+      ? sorted.map(c => choreCard(c, myUid)).join("")
+      : `<div class="tsk-empty">Дежурств нет. Добавьте «мытьё посуды», «вынос мусора» — с честным чередованием по кругу.</div>`;
     return `
-      <div class="tsk-turn anim" style="--turn-c:${col};">
-        <div class="tsk-turn__blob" style="width:150px;height:150px;right:-46px;top:-50px;"></div>
-        <div class="tsk-turn__blob" style="width:80px;height:80px;right:80px;bottom:-30px;"></div>
-        <div class="tsk-turn__eyebrow">Сейчас дежурный</div>
-        <div class="tsk-turn__row">
-          ${avatarHtml(curUid, "tsk-turn__av")}
-          <div class="tsk-turn__who">
-            <div class="tsk-turn__name">${escapeHtml(nameOf(curUid))}</div>
-            <div class="tsk-turn__chore">${c.emoji || "🔁"} ${escapeHtml(c.title)}</div>
-          </div>
-          <button class="tsk-turn__done" onclick="TasksUI.doneChore('${c.id}')">✓ Сделано</button>
+      <div class="tsk-section anim">
+        <div class="tsk-section__head">
+          <h2>🔁 Дежурства</h2>
+          <button class="tsk-section__add" onclick="TasksUI.add('chore')">+</button>
         </div>
-        <div class="tsk-turn__next">
-          Следующий: ${avatarHtml(nextUid, "tsk-turn__nextav")} <b>${escapeHtml(nameOf(nextUid))}</b>
-          ${c.lastDone ? ` · последний раз ${fmtAgo(c.lastDone)}` : ""}
-        </div>
+        ${body}
       </div>`;
   }
 
-  function choreChip(c) {
-    const rot = (c.rotation && c.rotation.length) ? c.rotation : members().map(m => m.uid);
-    const curUid = rot[(c.turnIdx || 0) % rot.length];
+  function rotationOf(c) {
+    return (c.rotation && c.rotation.length) ? c.rotation : members().map(m => m.uid);
+  }
+  function curUidOf(c) {
+    const rot = rotationOf(c);
+    return rot[(c.turnIdx || 0) % rot.length];
+  }
+  function isMyTurn(c, myUid) { return curUidOf(c) === myUid; }
+
+  function choreCard(c, myUid) {
+    const rot = rotationOf(c);
+    const curUid = curUidOf(c);
+    const nextUid = rot[((c.turnIdx || 0) + 1) % rot.length];
     const col = colorOf(curUid);
+    const mine = curUid === myUid;
     return `
-      <div class="tsk-chore" style="--c:${col};" onclick="TasksUI.edit('chore','${c.id}')">
-        <div class="tsk-chore__top">
-          <span class="tsk-chore__emoji">${c.emoji || "🔁"}</span>
-          <span class="tsk-chore__title">${escapeHtml(c.title)}</span>
+      <div class="tsk-chore ${mine ? "mine" : ""}" style="--c:${col};" onclick="TasksUI.edit('chore','${c.id}')">
+        <div class="tsk-chore__emoji">${c.emoji || "🔁"}</div>
+        <div class="tsk-chore__body">
+          <div class="tsk-chore__title">${escapeHtml(c.title)}</div>
+          <div class="tsk-chore__turn">
+            <span class="tsk-chore__dot" style="background:${col};">${nameOf(curUid).slice(0,1).toUpperCase()}</span>
+            ${mine ? "<b>твоя очередь</b>" : `очередь ${escapeHtml(nameOf(curUid))}`}
+          </div>
+          <div class="tsk-chore__when">${c.lastDone ? `делали ${fmtAgo(c.lastDone)} · далее ${escapeHtml(nameOf(nextUid))}` : `далее ${escapeHtml(nameOf(nextUid))}`}</div>
         </div>
-        <div class="tsk-chore__turn">
-          <span class="tsk-chore__dot" style="background:${col};">${nameOf(curUid).slice(0,1).toUpperCase()}</span>
-          очередь ${escapeHtml(nameOf(curUid))}
-        </div>
+        <button class="tsk-chore__done" onclick="event.stopPropagation();TasksUI.doneChore('${c.id}')">✓ Сделал</button>
       </div>`;
   }
 
