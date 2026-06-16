@@ -26,6 +26,7 @@
   let openPlace = null;      // null = обзор bento, иначе развёрнутое место
   let editId = null;         // редактируемая позиция в sheet
   const form = {};           // черновик формы
+  const ui = (k, s, c) => (window.uiIcon ? window.uiIcon(k, s, c) : "");
 
   /* ── Доступ к данным ── */
   function stockObj()    { return (window.Household && window.Household.data && window.Household.data.stock)    || {}; }
@@ -95,7 +96,7 @@
         <div class="stk-hero__eyebrow">${alert ? "Стоит пополнить" : "Запасы в порядке"}</div>
         <div class="stk-hero__big">${alert
           ? `${out + low} ${plural(out + low, "позиция", "позиции", "позиций")} на исходе`
-          : "Всё на месте 🌿"}</div>
+          : "Всё на месте"}</div>
         ${buyNames.length ? `<div class="stk-hero__names">
             ${buyNames.map(n => `<span class="stk-hero__pill">${escapeHtml(n)}</span>`).join("")}
             ${extra > 0 ? `<span class="stk-hero__pill">+${extra}</span>` : ""}
@@ -118,7 +119,7 @@
       <div class="bento anim">
         ${tiles.join("")}
         <div class="bento-add" onclick="StockUI.add()">
-          <div class="plus">+</div><span>Добавить запас</span>
+          <div class="plus">${ui("plus", 20)}</div><span>Добавить запас</span>
         </div>
       </div>
       <div class="anim">${renderShopping()}</div>
@@ -139,9 +140,9 @@
     return `
       <div class="bento-tile" style="--c1:${c1};--c2:${c2};" onclick="StockUI.openPlace('${p.id}')">
         <div class="bento-tile__deco"></div><div class="bento-tile__deco2"></div>
-        ${need ? `<div class="bento-tile__alert">⚠ ${need}</div>` : ""}
+        ${need ? `<div class="bento-tile__alert">${ui("warn", 12, "#fff")}${need}</div>` : ""}
         <div class="bento-tile__ico">${ico}</div>
-        <div class="bento-tile__name">${p.name}</div>
+        <div class="bento-tile__name">${p.name}<span class="bento-tile__chev">${ui("chevron", 16)}</span></div>
         <div class="bento-tile__meta">
           <span>${metaTxt}</span>
           ${dots ? `<span class="bento-dots">${dots}</span>` : ""}
@@ -160,10 +161,10 @@
     main.innerHTML = `
       <div class="stk-drawer">
         <div class="stk-drawer__head">
-          <button class="stk-drawer__back" onclick="StockUI.closePlace()">←</button>
+          <button class="stk-drawer__back" aria-label="Назад" onclick="StockUI.closePlace()">${ui("arrow-left", 20)}</button>
           <div class="stk-drawer__title">${p.name}</div>
           <button class="stk-drawer__add" style="background:${color};" onclick="StockUI.add()">
-            <span style="font-size:18px;line-height:1;">+</span> Добавить
+            ${ui("plus", 16, "#fff")} Добавить
           </button>
         </div>
         ${arr.length
@@ -174,29 +175,39 @@
     `;
   }
 
+  const STATUS_WORD = { ok: "в наличии", low: "заканчивается", out: "закончилось" };
+  const SEG_LABEL   = { ok: "Есть", low: "Мало", out: "Нет" };
+
   function itemRow(it) {
     const st = statusOf(it);
     const exp = expiryInfo(it);
     const isQty = it.track === "qty";
+    const placeColor = window.HOME_ICON_COLOR && window.HOME_ICON_COLOR[it.place]
+      ? window.HOME_ICON_COLOR[it.place] : "var(--home)";
 
     const right = isQty
       ? `<div class="stk-qty" onclick="event.stopPropagation()">
-           <button onclick="StockUI.qty('${it.id}',-1)">−</button>
+           <button aria-label="Меньше" onclick="StockUI.qty('${it.id}',-1)">${ui("minus", 16)}</button>
            <span class="stk-qty__val">${(+it.qty || 0)}</span>
-           <button onclick="StockUI.qty('${it.id}',1)">+</button>
+           <button aria-label="Больше" onclick="StockUI.qty('${it.id}',1)">${ui("plus", 16)}</button>
          </div>`
       : `<div class="stk-seg" onclick="event.stopPropagation()">
            ${["ok","low","out"].map(s =>
-             `<button class="${s} ${st === s ? "on" : ""}" onclick="StockUI.setStatus('${it.id}','${s}')"><i></i></button>`).join("")}
+             `<button class="${s} ${st === s ? "on" : ""}" aria-label="${SEG_LABEL[s]}" onclick="StockUI.setStatus('${it.id}','${s}')"><i></i><span>${SEG_LABEL[s]}</span></button>`).join("")}
          </div>`;
 
+    // мета-строка: статус словом (для qty — кол-во) + срок годности
     const meta = [];
     if (isQty) meta.push(`<span>${(+it.qty || 0)} ${it.unit || "шт"}${it.min ? ` · мин ${it.min}` : ""}</span>`);
-    if (exp) meta.push(`<span class="stk-badge ${exp.cls}">⏱ ${exp.txt}</span>`);
+    else       meta.push(`<span class="stk-item__st ${st}">${STATUS_WORD[st]}</span>`);
+    if (exp) meta.push(`<span class="stk-badge ${exp.cls}">${ui("clock", 12)}${exp.txt}</span>`);
+
+    // иконка места хранения в цветной плашке — даёт акцент и контекст
+    const tile = window.duoTile ? window.duoTile(it.place || "pantry", 22, 44) : "";
 
     return `
-      <div class="stk-item ${st === "out" ? "is-out" : ""}" onclick="StockUI.edit('${it.id}')">
-        <div class="stk-item__pulse ${st}"></div>
+      <div class="stk-item st-${st} ${st === "out" ? "is-out" : ""}" style="--pc:${placeColor};" onclick="StockUI.edit('${it.id}')">
+        <div class="stk-item__tile">${tile}</div>
         <div class="stk-item__body">
           <div class="stk-item__name">${escapeHtml(it.name)}</div>
           ${meta.length ? `<div class="stk-item__meta">${meta.join("")}</div>` : ""}
@@ -216,7 +227,7 @@
           </div>
           <div class="shop-name">${escapeHtml(s.name)}</div>
           ${s.fromStock ? `<span class="shop-src">кончается</span>` : ""}
-          <button class="shop-del" onclick="StockUI.delShop('${s.id}')">×</button>
+          <button class="shop-del" aria-label="Удалить" onclick="StockUI.delShop('${s.id}')">${ui("close", 16)}</button>
         </div>`).join("")
       : `<div style="text-align:center;color:var(--ink-3);font-size:13px;padding:14px 0;">Список пуст. Что заканчивается — добавится сюда автоматически.</div>`;
 
@@ -224,7 +235,7 @@
     return `
       <div class="shop-card">
         <div class="shop-card__head">
-          <span style="font-size:18px;">🛒</span>
+          <span class="shop-card__ico" style="color:#457b9d;">${window.duoIcon ? window.duoIcon("cart", 20) : ""}</span>
           <h2>Список покупок</h2>
           ${openCount ? `<span class="shop-card__count">${openCount}</span>` : ""}
         </div>
@@ -232,7 +243,7 @@
         <div class="shop-add">
           <input id="shop-input" type="text" placeholder="Добавить вручную…"
             onkeydown="if(event.key==='Enter')StockUI.addShopFromInput()">
-          <button onclick="StockUI.addShopFromInput()">+</button>
+          <button aria-label="Добавить" onclick="StockUI.addShopFromInput()">${ui("plus", 18, "#fff")}</button>
         </div>
       </div>`;
   }

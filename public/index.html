@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Финансовый контроль</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <!-- Домашний хаб: дизайн-токены + оболочка (поверх легаси-стилей денег) -->
 <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/shell.css">
@@ -15,33 +16,34 @@
 <link rel="stylesheet" href="css/motion.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-bottom:calc(94px + env(safe-area-inset-bottom));min-height:100vh;}
+body{background:#f4f1ea;color:#221f1a;font-family:'Manrope',sans-serif;padding-bottom:calc(94px + env(safe-area-inset-bottom));min-height:100vh;
+  background-image:radial-gradient(circle at 18% 12%, rgba(26,74,53,0.04), transparent 45%),radial-gradient(circle at 85% 8%, rgba(45,106,79,0.04), transparent 40%);background-attachment:fixed;}
 
-/* ── FONT SYSTEM ── */
-.font-display{font-family:'Outfit',sans-serif;letter-spacing:-0.02em;}
-.font-tiny{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;}
+/* ── FONT SYSTEM ── (унифицировано с миром «Дом») */
+.font-display{font-family:'Unbounded','Manrope',sans-serif;letter-spacing:-0.01em;}
+.font-tiny{font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#a39a8c;}
 .font-medium{font-weight:500;}
 .font-semibold{font-weight:600;}
 .font-bold{font-weight:700;}
 
-/* Cards */
-.card{background:#fff;border-radius:22px;padding:18px;box-shadow:0 1px 0 rgba(0,0,0,0.04),0 4px 20px rgba(0,0,0,0.04);}
+/* Cards — кремовая поверхность + тёплые тени */
+.card{background:#fffdf9;border:1px solid #f0ebe0;border-radius:24px;padding:18px;box-shadow:0 2px 8px rgba(40,30,15,0.06),0 8px 24px rgba(40,30,15,0.05);}
 
 /* Buttons */
-.btn-g{background:#1a4a35;color:#fff;border:none;cursor:pointer;border-radius:14px;font-family:inherit;font-weight:600;letter-spacing:-0.2px;transition:transform .15s, opacity .15s;}
+.btn-g{background:#1a4a35;color:#fff;border:none;cursor:pointer;border-radius:16px;font-family:inherit;font-weight:600;letter-spacing:-0.2px;transition:transform .15s, opacity .15s;}
 .btn-g:active{transform:scale(0.96);opacity:0.85;}
-.btn-ol{background:transparent;border:1.5px solid #e8e8e8;color:#1c1c1e;padding:9px 18px;font-size:13px;border-radius:50px;cursor:pointer;font-family:inherit;font-weight:600;transition:transform .15s;}
+.btn-ol{background:transparent;border:1.5px solid #e8e1d4;color:#221f1a;padding:9px 18px;font-size:13px;border-radius:50px;cursor:pointer;font-family:inherit;font-weight:600;transition:transform .15s;}
 .btn-ol:active{transform:scale(0.96);}
 
 /* Nav */
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 4px;border:none;background:transparent;color:#c7c7cc;cursor:pointer;font-family:'Manrope',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.2px;transition:color .2s, transform .15s;-webkit-tap-highlight-color:transparent;outline:none;}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 4px;border:none;background:transparent;color:#bdb3a4;cursor:pointer;font-family:'Manrope',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.2px;transition:color .2s, transform .15s;-webkit-tap-highlight-color:transparent;outline:none;}
 .nb:active{transform:scale(0.88);}
-.nb svg{stroke:#c7c7cc;fill:none;transition:stroke .25s,fill .25s;}
+.nb svg{stroke:#bdb3a4;fill:none;transition:stroke .25s,fill .25s;}
 .nb.active{color:#1a4a35;cursor:default;}
 .nb.active:active{transform:none;}
 .nb.active svg{stroke:#1a4a35;fill:none;}
 /* piggy is fill-only icon */
-.nb svg.fill-icon{stroke:none;fill:#c7c7cc;}
+.nb svg.fill-icon{stroke:none;fill:#bdb3a4;}
 .nb.active svg.fill-icon{stroke:none;fill:#1a4a35;}
 
 /* Remove tap highlight globally */
@@ -51,13 +53,13 @@ body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-b
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.0);z-index:50;display:flex;align-items:flex-end;backdrop-filter:blur(0px);transition:background .3s, backdrop-filter .3s;touch-action:none;}
 .overlay.visible{background:rgba(0,0,0,0.25);backdrop-filter:blur(4px);}
 .overlay.hidden{display:none!important;}
-.sheet{background:#fff;border-top-left-radius:32px;border-top-right-radius:32px;width:100%;max-height:93vh;overflow-y:auto;overscroll-behavior:contain;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:12px 22px 44px;transform:translateY(100%);transition:transform .38s cubic-bezier(0.34,1.56,0.64,1);touch-action:pan-y;}
+.sheet{background:#f4f1ea;border-top-left-radius:32px;border-top-right-radius:32px;width:100%;max-height:93vh;overflow-y:auto;overscroll-behavior:contain;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:12px 22px 44px;transform:translateY(100%);transition:transform .38s cubic-bezier(0.34,1.56,0.64,1);touch-action:pan-y;}
 .sheet.open{transform:translateY(0);}
-.handle{width:40px;height:5px;background:#e0e0e5;border-radius:4px;margin:0 auto 0;cursor:grab;display:block;}
+.handle{width:40px;height:5px;background:#e8e1d4;border-radius:4px;margin:0 auto 0;cursor:grab;display:block;}
 .handle-area{padding:16px 0 20px;display:flex;align-items:center;justify-content:center;cursor:grab;margin:-12px -22px 0;}
 
 /* Labels */
-.lbl{font-family:'Outfit',sans-serif;font-size:11px;color:#8e8e93;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;}
+.lbl{font-family:'Manrope',sans-serif;font-size:11px;color:#a39a8c;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:10px;}
 
 /* Layout */
 .row{display:flex;justify-content:space-between;align-items:center;}
@@ -66,39 +68,39 @@ body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-b
 .scroll-x > *{scroll-snap-align:start;}
 
 /* Transaction rows */
-.tx-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid #f2f2f7;transition:background .15s;}
-.tx-row:active{background:#f7f6f2;}
+.tx-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid #f0ebe0;transition:background .15s;}
+.tx-row:active{background:#f8f4ec;}
 
 /* Tags */
-.tag-in{background:#e8f8ef;color:#1b7a47;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;}
-.tag-out{background:#fff0f0;color:#c0392b;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;}
+.tag-in{background:#e8f6ee;color:#1a7a47;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;}
+.tag-out{background:#fbeae4;color:#c0563a;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;}
 
 /* Balance card */
-.balance-card{background:linear-gradient(145deg,#1a4a35 0%,#1e5c40 60%,#2d6a4f 100%);border-radius:26px;padding:24px;color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s, box-shadow .2s;}
+.balance-card{background:linear-gradient(150deg,#1a4a35 0%,#245a40 55%,#2f7050 100%);border-radius:30px;padding:24px;color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s, box-shadow .2s;box-shadow:0 8px 40px rgba(26,74,53,0.18);}
 .balance-card:active{transform:scale(0.98);box-shadow:0 2px 20px rgba(26,74,53,0.3);}
 
 /* Nav bar */
-.nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;padding:6px 0 calc(2px + env(safe-area-inset-bottom, 0px));z-index:20;}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,253,249,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(40,30,15,0.07);display:flex;align-items:center;padding:6px 0 calc(2px + env(safe-area-inset-bottom, 0px));z-index:20;}
 
 /* Header */
 .header{background:transparent;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
 
 /* Type switcher */
-.type-sw{background:#f2f2f7;border-radius:50px;padding:4px;display:flex;margin-bottom:24px;}
-.type-btn{flex:1;padding:12px;border-radius:50px;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;background:transparent;color:#8e8e93;transition:all .25s cubic-bezier(0.34,1.56,0.64,1);letter-spacing:-0.2px;}
-.type-btn.on{background:#fff;color:#1c1c1e;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.type-sw{background:#f1ece2;border-radius:50px;padding:4px;display:flex;margin-bottom:24px;}
+.type-btn{flex:1;padding:12px;border-radius:50px;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;background:transparent;color:#8a8178;transition:all .25s cubic-bezier(0.34,1.56,0.64,1);letter-spacing:-0.2px;}
+.type-btn.on{background:#fffdf9;color:#221f1a;box-shadow:0 2px 8px rgba(40,30,15,0.1);}
 
 /* Category chips */
-.chip{padding:9px 16px;border-radius:50px;border:1.5px solid #e8e8e8;background:#fff;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);color:#1c1c1e;}
+.chip{padding:9px 16px;border-radius:50px;border:1.5px solid #e8e1d4;background:#fffdf9;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);color:#221f1a;}
 .chip:active{transform:scale(0.94);}
-.chip.on{background:#1c1c1e;color:#fff;border-color:#1c1c1e;transform:scale(1.04);}
+.chip.on{background:#221f1a;color:#fff;border-color:#221f1a;transform:scale(1.04);}
 
 /* Income type buttons */
-.inc-btn{flex:1;padding:13px 4px;border-radius:50px;border:1.5px solid #e8e8e8;background:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(0.34,1.56,0.64,1);color:#1c1c1e;}
+.inc-btn{flex:1;padding:13px 4px;border-radius:50px;border:1.5px solid #e8e1d4;background:#fffdf9;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s cubic-bezier(0.34,1.56,0.64,1);color:#221f1a;}
 .inc-btn.on{background:#1a4a35;color:#fff;border-color:#1a4a35;transform:scale(1.03);}
 
 /* Day buttons */
-.day-btn{width:100%;aspect-ratio:1;border-radius:50%;border:1.5px solid #e8e8e8;background:#fff;font-family:'Manrope',sans-serif;font-size:11px;cursor:pointer;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);color:#1c1c1e;-webkit-tap-highlight-color:transparent;}
+.day-btn{width:100%;aspect-ratio:1;border-radius:50%;border:1.5px solid #e8e1d4;background:#fffdf9;font-family:'Manrope',sans-serif;font-size:11px;cursor:pointer;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);color:#221f1a;-webkit-tap-highlight-color:transparent;}
 .day-btn:active{transform:scale(0.88);}
 .day-btn.on{background:#1a4a35;color:#fff;border-color:#1a4a35;transform:scale(1.08);}
 
@@ -107,10 +109,10 @@ body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-b
 .svc-item:active{transform:scale(0.9);}
 .svc-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid transparent;transition:all .2s cubic-bezier(0.34,1.56,0.64,1);}
 .svc-item.on .svc-icon{border-color:#1a4a35;box-shadow:0 0 0 3px rgba(26,74,53,0.12);transform:scale(1.05);}
-.svc-name{font-size:10px;color:#8e8e93;text-align:center;font-family:'Manrope',sans-serif;font-weight:500;}
+.svc-name{font-size:10px;color:#8a8178;text-align:center;font-family:'Manrope',sans-serif;font-weight:500;}
 
 /* Progress bars */
-.pb{background:#f2f2f7;border-radius:8px;height:8px;margin-bottom:9px;}
+.pb{background:#f1ece2;border-radius:8px;height:8px;margin-bottom:9px;}
 .pf{background:linear-gradient(90deg,#1a4a35,#3d8b6b);height:8px;border-radius:8px;transition:width .8s cubic-bezier(0.34,1.56,0.64,1);}
 
 /* Scrollbar */
@@ -119,15 +121,15 @@ body{background:#f7f6f2;color:#1c1c1e;font-family:'Manrope',sans-serif;padding-b
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 
 /* Swipe to delete */
-.swipe-wrap{position:relative;overflow:hidden;border-bottom:1px solid #f2f2f7;}
+.swipe-wrap{position:relative;overflow:hidden;border-bottom:1px solid #f0ebe0;}
 .swipe-wrap:last-child{border-bottom:none;}
-.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:90px;background:rgba(232,141,103,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;}
-.swipe-del-bg.confirming{background:rgba(232,141,103,0.2);}
-.swipe-del-icon{width:46px;height:46px;border-radius:50%;background:rgba(232,141,103,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.4);will-change:transform,opacity;}
-.swipe-content{position:relative;background:#fff;transition:transform .22s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;touch-action:pan-y;}
+.swipe-del-bg{position:absolute;right:0;top:0;bottom:0;width:90px;background:rgba(192,86,58,0.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;}
+.swipe-del-bg.confirming{background:rgba(192,86,58,0.2);}
+.swipe-del-icon{width:46px;height:46px;border-radius:50%;background:rgba(192,86,58,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.4);will-change:transform,opacity;}
+.swipe-content{position:relative;background:#fffdf9;transition:transform .22s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;touch-action:pan-y;}
 
 /* Input fields */
-.field{width:100%;border:1.5px solid #e8e8e8;border-radius:16px;padding:14px 16px;font-family:inherit;font-size:15px;outline:none;background:#fff;color:#1c1c1e;transition:border .2s, transform .15s;}
+.field{width:100%;border:1.5px solid #e8e1d4;border-radius:16px;padding:14px 16px;font-family:inherit;font-size:15px;outline:none;background:#fffdf9;color:#221f1a;transition:border .2s, transform .15s;}
 .field:focus{border-color:#1a4a35;transform:scale(1.01);}
 
 /* Content padding */
@@ -160,10 +162,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 <body>
 
 <!-- LOADING SCREEN -->
-<div id="loading-screen" style="position:fixed;inset:0;background:#f7f6f2;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;">
+<div id="loading-screen" style="position:fixed;inset:0;background:#f4f1ea;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;">
   <div style="width:72px;height:72px;background:#1a4a35;border-radius:20px;display:flex;align-items:center;justify-content:center;"><svg width="38" height="38" color="#fff"><use href="#ico-bag"/></svg></div>
   <div style="text-align:center;">
-    <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:24px;color:#1c1c1e;line-height:1.15;letter-spacing:-0.04em;">Финансовый</div>
+    <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:24px;color:#221f1a;line-height:1.15;letter-spacing:-0.04em;">Финансовый</div>
     <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:24px;color:#1a4a35;line-height:1.15;letter-spacing:-0.04em;">контроль</div>
   </div>
 </div>
@@ -178,11 +180,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div style="width:60px;height:60px;background:#1a4a35;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:22px;"><svg width="32" height="32" color="#fff"><use href="#ico-bag"/></svg></div>
 
     <!-- Title -->
-    <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:28px;color:#1c1c1e;line-height:1.15;margin-bottom:4px;letter-spacing:-0.04em;">Финансовый</div>
+    <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:28px;color:#221f1a;line-height:1.15;margin-bottom:4px;letter-spacing:-0.04em;">Финансовый</div>
     <div style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:28px;color:#1a4a35;line-height:1.15;margin-bottom:18px;letter-spacing:-0.04em;">контроль</div>
 
     <!-- Description -->
-    <div style="font-size:15px;color:#8e8e93;line-height:1.55;margin-bottom:32px;">Войдите, чтобы получить свой кошелёк — доходы, расходы, подписки, копилка и бюджеты в одном месте.</div>
+    <div style="font-size:15px;color:#8a8178;line-height:1.55;margin-bottom:32px;">Войдите, чтобы получить свой кошелёк — доходы, расходы, подписки, копилка и бюджеты в одном месте.</div>
 
     <!-- Google button -->
     <button id="signin-btn" onclick="signInWithGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#1a4a35;border:none;border-radius:50px;padding:17px 28px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;color:#fff;margin-bottom:18px;letter-spacing:-0.2px;">
@@ -193,7 +195,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     </button>
 
     <!-- Security note -->
-    <div style="font-size:12px;color:#c7c7cc;text-align:center;line-height:1.5;">Защищённый вход через Google. Данные каждого аккаунта изолированы.</div>
+    <div style="font-size:12px;color:#bdb3a4;text-align:center;line-height:1.5;">Защищённый вход через Google. Данные каждого аккаунта изолированы.</div>
   </div>
 
   <!-- Bottom label -->
@@ -225,9 +227,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 </div>
 
 <!-- ░░ ПЕРЕКЛЮЧАТЕЛЬ МИРОВ ░░ -->
-<div id="world-switch" class="world-switch">
-  <button class="world-switch__btn on" data-world="money" onclick="setWorld('money')"><span class="em">💰</span>Деньги</button>
-  <button class="world-switch__btn" data-world="home" onclick="setWorld('home')"><span class="em">🏠</span>Дом</button>
+<div class="world-switch-bar">
+  <div id="world-switch" class="world-switch">
+    <button class="world-switch__btn on" data-world="money" onclick="setWorld('money')"><span class="em">💰</span>Деньги</button>
+    <button class="world-switch__btn" data-world="home" onclick="setWorld('home')"><span class="em">🏠</span>Дом</button>
+  </div>
 </div>
 
 
@@ -282,6 +286,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
   </symbol>
   <symbol id="ico-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </symbol>
+  <symbol id="ico-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 5l-7 7 7 7"/>
+  </symbol>
+  <symbol id="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M6 6l12 12M18 6L6 18"/>
   </symbol>
   <symbol id="ico-bag" viewBox="0 -2.5 46 46" fill="currentColor">
     <path d="M47,40h0a5,5,0,0,1-5,5H6a5,5,0,0,1-5-5V11A4,4,0,0,1,5,7H25.171l8.1-2.934a.99.99,0,0,1,1.268.589L35.391,7H39a4,4,0,0,1,4,4v2h0a4,4,0,0,1,4,4ZM5,9H5a2,2,0,0,0,0,4H8.634c.013-.005.021-.016.034-.021L19.65,9Zm29.078.181L33.016,6.257h0L30.964,7h0L25.453,9h-.01L14.4,13H35.466ZM41,11a2,2,0,0,0-2-2H36.117l1.454,4H41Zm2,4H5a3.955,3.955,0,0,1-2-.555V40a3,3,0,0,0,3,3H42a3,3,0,0,0,3-3V33H41a4,4,0,0,1,0-8h4V17A2,2,0,0,0,43,15Zm2,16V27H41a2,2,0,0,0,0,4Zm-4-3h2v2H41Z" transform="translate(-1 -4.006)" fill-rule="evenodd"/>
@@ -357,7 +367,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:20px;">
       <div style="font-weight:700;font-size:22px;">Новая запись</div>
-      <button onclick="closeSheet('tx')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f7f6f2;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('tx')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f4f1ea;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
     <!-- Type switcher -->
     <div class="type-sw">
@@ -368,16 +378,16 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="lbl">Сумма</div>
     <div style="display:flex;align-items:center;border-bottom:1.5px solid #e0e0d8;margin-bottom:20px;padding-bottom:10px;">
       <input id="tx-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-size:36px;font-weight:300;font-family:inherit;background:transparent;color:#1a1a1a;">
-      <span style="font-size:22px;color:#8e8e93;">₪</span>
+      <span style="font-size:22px;color:#8a8178;">₪</span>
     </div>
     <!-- Date -->
     <div class="lbl">Дата</div>
-    <div onclick="txToggleCal()" style="background:#fff;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;">
-      <svg width="20" height="20" style="flex-shrink:0;" color="#8e8e93"><use href="#ico-calendar"/></svg>
-      <span id="tx-date-lbl" style="flex:1;font-size:15px;font-weight:500;color:#1c1c1e;"></span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c7c7cc" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    <div onclick="txToggleCal()" style="background:#fff;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;">
+      <svg width="20" height="20" style="flex-shrink:0;" color="#8a8178"><use href="#ico-calendar"/></svg>
+      <span id="tx-date-lbl" style="flex:1;font-size:15px;font-weight:500;color:#221f1a;"></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bdb3a4" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div id="tx-cal-wrap" style="display:none;margin-bottom:16px;background:#fff;border:1.5px solid #e8e8e8;border-radius:16px;padding:14px;"></div>
+    <div id="tx-cal-wrap" style="display:none;margin-bottom:16px;background:#fff;border:1.5px solid #e8e1d4;border-radius:16px;padding:14px;"></div>
     <!-- Extra fields (note + category or income type) -->
     <div id="tx-extra"></div>
     <button class="btn-g" onclick="doAddTx()" style="width:100%;padding:15px;font-size:16px;border-radius:50px;margin-top:6px;opacity:0.9;">Добавить</button>
@@ -389,8 +399,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
   <div class="sheet">
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:22px;">
-      <div id="sub-modal-title" style="font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:#1c1c1e;"></div>
-      <button onclick="closeSheet('sub')" style="width:32px;height:32px;border-radius:50%;border:none;background:#f2f2f7;color:#8e8e93;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;">✕</button>
+      <div id="sub-modal-title" style="font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:#221f1a;"></div>
+      <button onclick="closeSheet('sub')" style="width:32px;height:32px;border-radius:50%;border:none;background:#f1ece2;color:#8a8178;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
 
     <!-- Service selector - horizontal scroll -->
@@ -399,13 +409,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 
     <!-- Name field -->
     <div class="lbl">Название</div>
-    <input id="sub-name" type="text" placeholder="Netflix" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:13px 16px;font-family:'Manrope',sans-serif;font-size:15px;outline:none;margin-bottom:18px;color:#1c1c1e;background:#fff;">
+    <input id="sub-name" type="text" placeholder="Netflix" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:13px 16px;font-family:'Manrope',sans-serif;font-size:15px;outline:none;margin-bottom:18px;color:#221f1a;background:#fff;">
 
     <!-- Amount -->
     <div class="lbl">Стоимость в месяц</div>
-    <div style="border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 16px;display:flex;align-items:center;margin-bottom:22px;background:#fff;">
-      <input id="sub-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:24px;font-weight:600;background:transparent;color:#1c1c1e;letter-spacing:-0.02em;width:0;">
-      <span style="color:#8e8e93;font-size:14px;font-family:'Manrope',sans-serif;">₪ / мес.</span>
+    <div style="border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 16px;display:flex;align-items:center;margin-bottom:22px;background:#fff;">
+      <input id="sub-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-family:'Unbounded','Manrope',sans-serif;font-size:24px;font-weight:600;background:transparent;color:#221f1a;letter-spacing:-0.03em;width:0;">
+      <span style="color:#8a8178;font-size:14px;font-family:'Manrope',sans-serif;">₪ / мес.</span>
     </div>
 
     <!-- Day of charge -->
@@ -415,19 +425,19 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <!-- Auto-charge toggle (edit mode only) -->
     <div id="sub-autochg-row" style="display:none;background:#fff;border-radius:14px;border:1.5px solid #EFECE6;padding:14px 16px;align-items:center;justify-content:space-between;margin-bottom:18px;cursor:pointer;" onclick="toggleSubAutoCharge()">
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:36px;height:36px;border-radius:10px;background:#f0faf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="18" height="18" color="#1a4a35"><use href="#ico-repeat"/></svg></div>
+        <div style="width:36px;height:36px;border-radius:10px;background:#e8f6ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="18" height="18" color="#1a4a35"><use href="#ico-repeat"/></svg></div>
         <div>
-          <div style="font-weight:600;font-size:14px;color:#1c1c1e;">Авто-списание</div>
-          <div style="font-size:12px;color:#8e8e93;margin-top:1px;">Добавлять в расходы автоматически</div>
+          <div style="font-weight:600;font-size:14px;color:#221f1a;">Авто-списание</div>
+          <div style="font-size:12px;color:#8a8178;margin-top:1px;">Добавлять в расходы автоматически</div>
         </div>
       </div>
-      <div id="sub-autochg-toggle" style="width:51px;height:31px;border-radius:50px;background:#e8e8e8;position:relative;transition:background .25s;flex-shrink:0;">
+      <div id="sub-autochg-toggle" style="width:51px;height:31px;border-radius:50px;background:#e8e1d4;position:relative;transition:background .25s;flex-shrink:0;">
         <div id="sub-autochg-knob" style="position:absolute;width:27px;height:27px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
       </div>
     </div>
 
     <button class="btn-g" id="sub-save-btn" onclick="doSaveSub()" style="width:100%;padding:15px;font-size:15px;border-radius:50px;margin-bottom:10px;"></button>
-    <button id="sub-del-btn" style="display:none;width:100%;padding:14px;font-size:14px;border-radius:50px;background:transparent;border:1.5px solid #E88D67;color:#E88D67;font-family:'Manrope',sans-serif;font-weight:600;cursor:pointer;" onclick="doDelSub()">Удалить подписку</button>
+    <button id="sub-del-btn" style="display:none;width:100%;padding:14px;font-size:14px;border-radius:50px;background:transparent;border:1.5px solid #c0563a;color:#c0563a;font-family:'Manrope',sans-serif;font-weight:600;cursor:pointer;" onclick="doDelSub()">Удалить подписку</button>
   </div>
 </div>
 
@@ -437,18 +447,18 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:20px;">
       <div style="font-weight:700;font-size:22px;">Новая цель</div>
-      <button onclick="closeSheet('goal')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f7f6f2;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('goal')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f4f1ea;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
     <div class="lbl">Иконка</div>
     <div id="goal-icons" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;"></div>
     <div class="lbl">Цвет</div>
     <div id="goal-colors" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;"></div>
     <div class="lbl">Название</div>
-    <input id="g-name" type="text" placeholder="На отпуск" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
+    <input id="g-name" type="text" placeholder="На отпуск" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
     <div class="lbl">Цель, ₪</div>
-    <input id="g-target" type="number" placeholder="5000" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
+    <input id="g-target" type="number" placeholder="5000" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
     <div class="lbl">Дата цели (необязательно)</div>
-    <input id="g-deadline" type="date" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:24px;background:#fff;color:#1a1a1a;">
+    <input id="g-deadline" type="date" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:24px;background:#fff;color:#1a1a1a;">
     <button class="btn-g" onclick="doAddGoal()" style="width:100%;padding:15px;font-size:16px;border-radius:16px;">Создать</button>
   </div>
 </div>
@@ -459,15 +469,15 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:20px;">
       <div style="font-weight:700;font-size:22px;">Снять со счёта</div>
-      <button onclick="closeSheet('withdraw')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f7f6f2;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('withdraw')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f4f1ea;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
     <div id="withdraw-goal-info" style="margin-bottom:20px;"></div>
     <div class="lbl">Сумма снятия ₪</div>
     <div style="display:flex;align-items:center;border-bottom:1.5px solid #e0e0d8;margin-bottom:24px;padding-bottom:10px;">
       <input id="withdraw-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-size:36px;font-weight:300;font-family:inherit;background:transparent;">
-      <span style="font-size:22px;color:#8e8e93;">₪</span>
+      <span style="font-size:22px;color:#8a8178;">₪</span>
     </div>
-    <button onclick="doWithdraw()" style="width:100%;padding:15px;font-size:16px;border-radius:50px;background:#fff;border:1.5px solid #e8e8e8;font-family:inherit;font-weight:700;cursor:pointer;color:#1a1a1a;">− Снять</button>
+    <button onclick="doWithdraw()" style="width:100%;padding:15px;font-size:16px;border-radius:50px;background:#fff;border:1.5px solid #e8e1d4;font-family:inherit;font-weight:700;cursor:pointer;color:#1a1a1a;">− Снять</button>
   </div>
 </div>
 
@@ -477,13 +487,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:20px;">
       <div style="font-weight:700;font-size:22px;">Пополнить копилку</div>
-      <button onclick="closeSheet('saving')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f7f6f2;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('saving')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f4f1ea;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
     <div id="saving-goal-info" style="margin-bottom:20px;"></div>
     <div class="lbl">Сумма пополнения ₪</div>
     <div style="display:flex;align-items:center;border-bottom:1.5px solid #e0e0d8;margin-bottom:24px;padding-bottom:10px;">
       <input id="saving-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-size:36px;font-weight:300;font-family:inherit;background:transparent;">
-      <span style="font-size:22px;color:#8e8e93;">₪</span>
+      <span style="font-size:22px;color:#8a8178;">₪</span>
     </div>
     <button class="btn-g" onclick="doSaving()" style="width:100%;padding:15px;font-size:16px;border-radius:16px;">Пополнить</button>
   </div>
@@ -495,20 +505,20 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:20px;">
       <div style="font-weight:700;font-size:22px;">Изменить цель</div>
-      <button onclick="closeSheet('edit-goal')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f7f6f2;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('edit-goal')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f4f1ea;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
     <div class="lbl">Иконка</div>
     <div id="edit-goal-icons" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;"></div>
     <div class="lbl">Цвет</div>
     <div id="edit-goal-colors" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;"></div>
     <div class="lbl">Название</div>
-    <input id="eg-name" type="text" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
+    <input id="eg-name" type="text" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
     <div class="lbl">Цель, ₪</div>
-    <input id="eg-target" type="number" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
+    <input id="eg-target" type="number" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;">
     <div class="lbl">Дата цели (необязательно)</div>
-    <input id="eg-deadline" type="date" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;color:#1a1a1a;">
+    <input id="eg-deadline" type="date" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:16px;outline:none;margin-bottom:18px;background:#fff;color:#1a1a1a;">
     <button class="btn-g" onclick="doEditGoal()" style="width:100%;padding:15px;font-size:16px;border-radius:16px;margin-bottom:10px;">Сохранить</button>
-    <button onclick="doDeleteGoal()" style="width:100%;padding:15px;font-size:16px;border-radius:16px;background:#fff;border:1.5px solid #E88D67;color:#E88D67;font-family:inherit;font-weight:600;cursor:pointer;">Удалить цель</button>
+    <button onclick="doDeleteGoal()" style="width:100%;padding:15px;font-size:16px;border-radius:16px;background:#fff;border:1.5px solid #c0563a;color:#c0563a;font-family:inherit;font-weight:600;cursor:pointer;">Удалить цель</button>
   </div>
 </div>
 
@@ -519,42 +529,42 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;flex-shrink:0;">
       <button onclick="calClose()" style="border:none;background:none;font-family:'Manrope',sans-serif;font-size:16px;font-weight:500;color:#1a4a35;cursor:pointer;padding:4px 0;">Закрыть</button>
-      <div style="font-family:'Manrope',sans-serif;font-size:17px;font-weight:700;color:#1c1c1e;">Выберите период</div>
+      <div style="font-family:'Manrope',sans-serif;font-size:17px;font-weight:700;color:#221f1a;">Выберите период</div>
       <button id="cal-done-btn" onclick="calApply()" style="border:none;background:none;font-family:'Manrope',sans-serif;font-size:16px;font-weight:600;color:#1a4a35;cursor:pointer;padding:4px 0;opacity:0.35;" disabled>Готово</button>
     </div>
 
     <!-- Date range fields -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0 20px 12px;flex-shrink:0;">
-      <div style="padding:8px 12px 10px 0;border-right:1px solid #f2f2f7;">
-        <div style="font-size:12px;color:#8e8e93;margin-bottom:4px;font-family:'Manrope',sans-serif;">Дата начала</div>
-        <div id="cal-start-lbl" style="font-size:16px;font-weight:500;color:#1c1c1e;font-family:'Manrope',sans-serif;">—</div>
+      <div style="padding:8px 12px 10px 0;border-right:1px solid #f1ece2;">
+        <div style="font-size:12px;color:#8a8178;margin-bottom:4px;font-family:'Manrope',sans-serif;">Дата начала</div>
+        <div id="cal-start-lbl" style="font-size:16px;font-weight:500;color:#221f1a;font-family:'Manrope',sans-serif;">—</div>
         <div id="cal-start-line" style="height:2px;background:#d0d0d8;border-radius:2px;margin-top:6px;"></div>
       </div>
       <div style="padding:8px 0 10px 12px;">
-        <div style="font-size:12px;color:#8e8e93;margin-bottom:4px;font-family:'Manrope',sans-serif;">Дата окончания</div>
-        <div id="cal-end-lbl" style="font-size:16px;font-weight:500;color:#8e8e93;font-family:'Manrope',sans-serif;">—</div>
+        <div style="font-size:12px;color:#8a8178;margin-bottom:4px;font-family:'Manrope',sans-serif;">Дата окончания</div>
+        <div id="cal-end-lbl" style="font-size:16px;font-weight:500;color:#8a8178;font-family:'Manrope',sans-serif;">—</div>
         <div id="cal-end-line" style="height:2px;background:#d0d0d8;border-radius:2px;margin-top:6px;"></div>
       </div>
     </div>
 
     <!-- Quick chips -->
     <div style="display:flex;gap:8px;padding:0 20px 12px;overflow-x:auto;flex-shrink:0;">
-      <button onclick="calQuick('today')" style="white-space:nowrap;border:1.5px solid #e8e8e8;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#1c1c1e;flex-shrink:0;">Сегодня</button>
-      <button onclick="calQuick('7days')" style="white-space:nowrap;border:1.5px solid #e8e8e8;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#1c1c1e;flex-shrink:0;">7 дней</button>
-      <button onclick="calQuick('month')" style="white-space:nowrap;border:1.5px solid #e8e8e8;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#1c1c1e;flex-shrink:0;">Этот месяц</button>
-      <button onclick="calQuick('year')" style="white-space:nowrap;border:1.5px solid #e8e8e8;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#1c1c1e;flex-shrink:0;">Этот год</button>
-      <button id="cal-reset-btn" onclick="calQuick('reset')" style="display:none;white-space:nowrap;border:1.5px solid #e8e8e8;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#E88D67;flex-shrink:0;">Сбросить</button>
+      <button onclick="calQuick('today')" style="white-space:nowrap;border:1.5px solid #e8e1d4;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#221f1a;flex-shrink:0;">Сегодня</button>
+      <button onclick="calQuick('7days')" style="white-space:nowrap;border:1.5px solid #e8e1d4;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#221f1a;flex-shrink:0;">7 дней</button>
+      <button onclick="calQuick('month')" style="white-space:nowrap;border:1.5px solid #e8e1d4;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#221f1a;flex-shrink:0;">Этот месяц</button>
+      <button onclick="calQuick('year')" style="white-space:nowrap;border:1.5px solid #e8e1d4;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#221f1a;flex-shrink:0;">Этот год</button>
+      <button id="cal-reset-btn" onclick="calQuick('reset')" style="display:none;white-space:nowrap;border:1.5px solid #e8e1d4;background:#fff;border-radius:50px;padding:7px 14px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:#c0563a;flex-shrink:0;">Сбросить</button>
     </div>
 
     <!-- Days of week header -->
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:0 16px 8px;flex-shrink:0;border-bottom:1px solid #f2f2f7;">
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Пн</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Вт</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Ср</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Чт</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Пт</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Сб</div>
-      <div style="text-align:center;font-size:12px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Вс</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);padding:0 16px 8px;flex-shrink:0;border-bottom:1px solid #f1ece2;">
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Пн</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Вт</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Ср</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Чт</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Пт</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Сб</div>
+      <div style="text-align:center;font-size:12px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:4px 0;">Вс</div>
     </div>
 
     <!-- Scrollable months -->
@@ -571,17 +581,17 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:16px;">
       <div>
-        <div id="income-sheet-title" style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#1c1c1e;letter-spacing:-0.04em;"></div>
-        <div id="income-sheet-subtitle" style="font-size:13px;color:#8e8e93;margin-top:2px;"></div>
+        <div id="income-sheet-title" style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#221f1a;letter-spacing:-0.04em;"></div>
+        <div id="income-sheet-subtitle" style="font-size:13px;color:#8a8178;margin-top:2px;"></div>
       </div>
-      <button onclick="closeSheet('income')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f2f2f7;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="closeSheet('income')" style="width:34px;height:34px;border-radius:50%;border:none;background:#f1ece2;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
 
     <!-- Year pill selector -->
     <div id="income-year-pills" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;"></div>
 
     <!-- Year total -->
-    <div id="income-year-total" style="background:#f7f6f2;border-radius:18px;padding:16px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;"></div>
+    <div id="income-year-total" style="background:#f4f1ea;border-radius:18px;padding:16px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;"></div>
 
     <!-- Month bars -->
     <div id="income-months" style="display:flex;flex-direction:column;gap:4px;"></div>
@@ -590,11 +600,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 
 <!-- OVERVIEW -->
 <div class="overlay hidden" id="ov-overview" onclick="if(event.target===this)closeSheet('overview')" style="align-items:stretch;">
-  <div style="background:#f7f6f2;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
+  <div style="background:#f4f1ea;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
     <div style="background:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ebebeb;position:sticky;top:0;z-index:5;border-top-left-radius:28px;border-top-right-radius:28px;">
-      <button onclick="closeSheet('overview')" style="width:36px;height:36px;border-radius:50%;border:none;background:#f7f6f2;font-size:18px;cursor:pointer;">←</button>
+      <button onclick="closeSheet('overview')" aria-label="Назад" style="width:36px;height:36px;border-radius:50%;border:none;background:#f4f1ea;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#221f1a;"><svg width="20" height="20"><use href="#ico-arrow-left"/></svg></button>
       <div>
-        <div style="font-size:11px;color:#8e8e93;text-transform:uppercase;letter-spacing:1px;">Обзор счёта</div>
+        <div style="font-size:11px;color:#8a8178;text-transform:uppercase;letter-spacing:1px;">Обзор счёта</div>
         <div style="font-weight:700;font-size:18px;">Все операции</div>
       </div>
     </div>
@@ -604,11 +614,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 
 <!-- HISTORY EXP DETAIL SHEET -->
 <div class="overlay hidden" id="ov-hist-exp" onclick="if(event.target===this)closeSheet('hist-exp')" style="align-items:stretch;">
-  <div style="background:#f7f6f2;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
+  <div style="background:#f4f1ea;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
     <div style="background:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ebebeb;position:sticky;top:0;z-index:5;border-top-left-radius:28px;border-top-right-radius:28px;">
-      <button onclick="closeSheet('hist-exp')" style="width:36px;height:36px;border-radius:50%;border:none;background:#f7f6f2;font-size:18px;cursor:pointer;-webkit-tap-highlight-color:transparent;">←</button>
+      <button onclick="closeSheet('hist-exp')" aria-label="Назад" style="width:36px;height:36px;border-radius:50%;border:none;background:#f4f1ea;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;color:#221f1a;"><svg width="20" height="20"><use href="#ico-arrow-left"/></svg></button>
       <div>
-        <div style="font-size:11px;color:#8e8e93;text-transform:uppercase;letter-spacing:1px;">Структура</div>
+        <div style="font-size:11px;color:#8a8178;text-transform:uppercase;letter-spacing:1px;">Структура</div>
         <div style="font-weight:700;font-size:18px;">Траты</div>
       </div>
     </div>
@@ -618,11 +628,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 
 <!-- HISTORY INC DETAIL SHEET -->
 <div class="overlay hidden" id="ov-hist-inc" onclick="if(event.target===this)closeSheet('hist-inc')" style="align-items:stretch;">
-  <div style="background:#f7f6f2;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
+  <div style="background:#f4f1ea;width:100%;height:92vh;border-top-left-radius:28px;border-top-right-radius:28px;overflow-y:auto;animation:su .25s ease;">
     <div style="background:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #ebebeb;position:sticky;top:0;z-index:5;border-top-left-radius:28px;border-top-right-radius:28px;">
-      <button onclick="closeSheet('hist-inc')" style="width:36px;height:36px;border-radius:50%;border:none;background:#f7f6f2;font-size:18px;cursor:pointer;-webkit-tap-highlight-color:transparent;">←</button>
+      <button onclick="closeSheet('hist-inc')" aria-label="Назад" style="width:36px;height:36px;border-radius:50%;border:none;background:#f4f1ea;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;color:#221f1a;"><svg width="20" height="20"><use href="#ico-arrow-left"/></svg></button>
       <div>
-        <div style="font-size:11px;color:#8e8e93;text-transform:uppercase;letter-spacing:1px;">Структура</div>
+        <div style="font-size:11px;color:#8a8178;text-transform:uppercase;letter-spacing:1px;">Структура</div>
         <div style="font-weight:700;font-size:18px;">Доходы</div>
       </div>
     </div>
@@ -635,10 +645,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
   <div class="sheet">
     <div class="handle-area"><div class="handle"></div></div>
     <div class="row" style="margin-bottom:22px;">
-      <div id="recur-modal-title" style="font-weight:700;font-size:20px;color:#1c1c1e;"></div>
-      <button onclick="closeSheet('recur')" style="width:32px;height:32px;border-radius:50%;border:none;background:#f2f2f7;color:#8e8e93;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <div id="recur-modal-title" style="font-weight:700;font-size:20px;color:#221f1a;"></div>
+      <button onclick="closeSheet('recur')" style="width:32px;height:32px;border-radius:50%;border:none;background:#f1ece2;color:#8a8178;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
     </div>
-    <div style="background:#f2f2f7;border-radius:50px;padding:4px;display:flex;margin-bottom:22px;">
+    <div style="background:#f1ece2;border-radius:50px;padding:4px;display:flex;margin-bottom:22px;">
       <button id="recur-type-exp" onclick="setRecurMode('expense')" style="flex:1;padding:10px;border-radius:50px;border:none;font-family:'Manrope',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Расход</button>
       <button id="recur-type-inc" onclick="setRecurMode('income')" style="flex:1;padding:10px;border-radius:50px;border:none;font-family:'Manrope',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Доход</button>
       <button id="recur-type-sub" onclick="setRecurMode('sub')" style="flex:1;padding:9px 6px;border-radius:50px;border:none;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;"><svg width="13" height="13" color="currentColor"><use href="#ico-film"/></svg>Подписки</button>
@@ -651,19 +661,19 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     <!-- Regular fields panel -->
     <div id="recur-regular-panel">
       <div class="lbl">Сумма</div>
-      <div style="border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 16px;display:flex;align-items:center;margin-bottom:18px;background:#fff;">
-        <input id="recur-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-family:'Outfit',sans-serif;font-size:24px;font-weight:600;background:transparent;color:#1c1c1e;width:0;">
-        <span style="color:#8e8e93;font-size:14px;font-family:'Manrope',sans-serif;">₪</span>
+      <div style="border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 16px;display:flex;align-items:center;margin-bottom:18px;background:#fff;">
+        <input id="recur-amt" type="number" placeholder="0" style="flex:1;border:none;outline:none;font-family:'Unbounded','Manrope',sans-serif;font-size:24px;font-weight:600;background:transparent;color:#221f1a;letter-spacing:-0.03em;width:0;">
+        <span style="color:#8a8178;font-size:14px;font-family:'Manrope',sans-serif;">₪</span>
       </div>
       <div class="lbl">Описание</div>
-      <input id="recur-note" type="text" placeholder="напр. Арнона, Wolt, Зарплата" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:13px 16px;font-family:'Manrope',sans-serif;font-size:15px;outline:none;margin-bottom:18px;color:#1c1c1e;background:#fff;">
+      <input id="recur-note" type="text" placeholder="напр. Арнона, Wolt, Зарплата" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:13px 16px;font-family:'Manrope',sans-serif;font-size:15px;outline:none;margin-bottom:18px;color:#221f1a;background:#fff;">
       <div class="lbl">Категория</div>
       <div id="recur-cats" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;"></div>
       <div class="lbl">Повторение</div>
       <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
-        <button onclick="setRecurFreq('daily')"   id="rf-daily"   style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e8e8;background:#fff;color:#1c1c1e;">Ежедневно</button>
-        <button onclick="setRecurFreq('weekly')"  id="rf-weekly"  style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e8e8;background:#fff;color:#1c1c1e;">Еженедельно</button>
-        <button onclick="setRecurFreq('monthly')" id="rf-monthly" style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e8e8;background:#fff;color:#1c1c1e;">Ежемесячно</button>
+        <button onclick="setRecurFreq('daily')"   id="rf-daily"   style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e1d4;background:#fff;color:#221f1a;">Ежедневно</button>
+        <button onclick="setRecurFreq('weekly')"  id="rf-weekly"  style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e1d4;background:#fff;color:#221f1a;">Еженедельно</button>
+        <button onclick="setRecurFreq('monthly')" id="rf-monthly" style="padding:9px 16px;border-radius:50px;font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid #e8e1d4;background:#fff;color:#221f1a;">Ежемесячно</button>
       </div>
       <div id="recur-day-wrap" style="display:none;margin-bottom:22px;">
         <div id="recur-day-label" class="lbl"></div>
@@ -672,13 +682,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
     </div>
     <div style="margin-bottom:22px;">
       <div class="lbl">Начать с</div>
-      <div style="border:1.5px solid #e8e8e8;border-radius:14px;padding:2px 4px;background:#fff;display:flex;align-items:center;gap:10px;">
-        <svg width="18" height="18" color="#8e8e93" style="margin-left:12px;flex-shrink:0;"><use href="#ico-calendar"/></svg>
-        <input type="date" id="recur-startfrom" onchange="onRecurStartFromChange(this.value)" style="flex:1;border:none;outline:none;font-family:'Manrope',sans-serif;font-size:15px;background:transparent;color:#1c1c1e;padding:11px 12px 11px 0;cursor:pointer;">
+      <div style="border:1.5px solid #e8e1d4;border-radius:14px;padding:2px 4px;background:#fff;display:flex;align-items:center;gap:10px;">
+        <svg width="18" height="18" color="#8a8178" style="margin-left:12px;flex-shrink:0;"><use href="#ico-calendar"/></svg>
+        <input type="date" id="recur-startfrom" onchange="onRecurStartFromChange(this.value)" style="flex:1;border:none;outline:none;font-family:'Manrope',sans-serif;font-size:15px;background:transparent;color:#221f1a;padding:11px 12px 11px 0;cursor:pointer;">
       </div>
     </div>
     <button class="btn-g" id="recur-save-btn" onclick="doSaveRecur()" style="width:100%;padding:15px;font-size:15px;border-radius:50px;margin-bottom:10px;"></button>
-    <button id="recur-del-btn" style="display:none;width:100%;padding:14px;font-size:14px;border-radius:50px;background:transparent;border:1.5px solid #E88D67;color:#E88D67;font-family:'Manrope',sans-serif;font-weight:600;cursor:pointer;" onclick="doDelRecur()">Удалить правило</button>
+    <button id="recur-del-btn" style="display:none;width:100%;padding:14px;font-size:14px;border-radius:50px;background:transparent;border:1.5px solid #c0563a;color:#c0563a;font-family:'Manrope',sans-serif;font-weight:600;cursor:pointer;" onclick="doDelRecur()">Удалить правило</button>
   </div>
 </div>
 
@@ -851,7 +861,7 @@ const CATEGORY_META = {
 // Helper: render duotone category icon
 function catIcon(cat, size=22) {
   const m = CATEGORY_META[cat];
-  if(!m) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e8e8e8"/></svg>`;
+  if(!m) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e8e1d4"/></svg>`;
   const c = m.color;
   const paths = m.svg.replace(/stroke="C"/g, `stroke="${c}"`).replace(/fill="C"/g, `fill="${c}"`);
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
@@ -860,7 +870,7 @@ function catIcon(cat, size=22) {
 // Helper: render category tile (44×44 with colored bg)
 function catTile(cat, size=22, tileSize=44) {
   const m = CATEGORY_META[cat];
-  const bg = m ? m.color+'1a' : '#f2f2f7';
+  const bg = m ? m.color+'1a' : '#f1ece2';
   const r = Math.round(tileSize*0.32);
   return `<div style="width:${tileSize}px;height:${tileSize}px;border-radius:${r}px;background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${catIcon(cat,size)}</div>`;
 }
@@ -1051,10 +1061,10 @@ function calTapDay(iso){
 function calUpdateUI(){
   // Update labels
   document.getElementById("cal-start-lbl").textContent=fmtCalDate(calStart);
-  document.getElementById("cal-start-lbl").style.color=calStart?"#1c1c1e":"#8e8e93";
+  document.getElementById("cal-start-lbl").style.color=calStart?"#221f1a":"#8a8178";
   document.getElementById("cal-start-line").style.background=calStart?"#1a4a35":"#d0d0d8";
   document.getElementById("cal-end-lbl").textContent=fmtCalDate(calEnd);
-  document.getElementById("cal-end-lbl").style.color=calEnd?"#1c1c1e":"#8e8e93";
+  document.getElementById("cal-end-lbl").style.color=calEnd?"#221f1a":"#8a8178";
   document.getElementById("cal-end-line").style.background=calEnd?"#1a4a35":"#d0d0d8";
   // Done button
   const done=document.getElementById("cal-done-btn");
@@ -1093,7 +1103,7 @@ function calRenderMonths(){
         const isEnd=iso===calEnd;
         const inRange=calStart&&calEnd&&iso>calStart&&iso<calEnd;
         const isSingle=calStart&&!calEnd&&iso===calStart;
-        let bg="transparent", color=isFuture?"#d0d0d8":"#1c1c1e", fw="400", extraStyle="";
+        let bg="transparent", color=isFuture?"#d0d0d8":"#221f1a", fw="400", extraStyle="";
         if(isStart||isEnd||isSingle){ bg="#1a4a35"; color="#fff"; fw="700"; }
         else if(inRange){ bg="#eef5f1"; color="#1a4a35"; fw="500"; }
         else if(isToday){ extraStyle="box-shadow:0 0 0 2px #1a4a35;"; }
@@ -1145,7 +1155,7 @@ function openSheet(id){
     const sh=ov.querySelector(".sheet");
     if(sh){
       sh.classList.add("open");
-      if(id!=="body") initSheetSwipeClose(sh,id);
+      // свайп-закрытие теперь единое — js/sheet-swipe.js (обе системы листов)
     }
   });
 }
@@ -1262,7 +1272,7 @@ function renderIncomeSheet(){
   if(pillsEl){
     pillsEl.innerHTML=years.map(y=>{
       const sel=y===incomeSheetYear;
-      return `<button onclick="incomeShiftYear(${y-incomeSheetYear})" style="flex-shrink:0;padding:7px 16px;border-radius:50px;border:1.5px solid ${sel?color:'#e8e8e8'};background:${sel?color+'18':'#fff'};color:${sel?color:'#8e8e93'};font-family:'Manrope',sans-serif;font-size:14px;font-weight:${sel?'700':'500'};cursor:pointer;transition:all .2s;">${y}</button>`;
+      return `<button onclick="incomeShiftYear(${y-incomeSheetYear})" style="flex-shrink:0;padding:7px 16px;border-radius:50px;border:1.5px solid ${sel?color:'#e8e1d4'};background:${sel?color+'18':'#fff'};color:${sel?color:'#8a8178'};font-family:'Manrope',sans-serif;font-size:14px;font-weight:${sel?'700':'500'};cursor:pointer;transition:all .2s;">${y}</button>`;
     }).join("");
   }
 
@@ -1273,10 +1283,10 @@ function renderIncomeSheet(){
 
   document.getElementById("income-year-total").innerHTML=`
     <div>
-      <div class="font-tiny" style="color:#8e8e93;margin-bottom:4px;">Итого за ${incomeSheetYear}</div>
+      <div class="font-tiny" style="color:#8a8178;margin-bottom:4px;">Итого за ${incomeSheetYear}</div>
       <div class="font-display" style="font-size:26px;font-weight:600;color:${color};">+${fmt(yTotal)} ₪</div>
     </div>
-    ${diff!==null?`<div style="background:${diff>=0?color+'1a':'#E88D671a'};color:${diff>=0?color:'#E88D67'};border-radius:50px;padding:6px 12px;font-size:13px;font-weight:600;">${diff>=0?'+':''}${diff}% к ${incomeSheetYear-1}</div>`:''}`;
+    ${diff!==null?`<div style="background:${diff>=0?color+'1a':'#c0563a1a'};color:${diff>=0?color:'#c0563a'};border-radius:50px;padding:6px 12px;font-size:13px;font-weight:600;">${diff>=0?'+':''}${diff}% к ${incomeSheetYear-1}</div>`:''}`;
 
   // Months
   const months=Array.from({length:12},(_,m)=>
@@ -1293,13 +1303,13 @@ function renderIncomeSheet(){
     const monthDiff=prevAmt>0?Math.round((amt-prevAmt)/prevAmt*100):null;
     return `
       <div style="display:flex;align-items:center;gap:12px;padding:11px ${isCurrentMonth?'10px':'2px'};border-radius:${isCurrentMonth?'12px':'0'};background:${isCurrentMonth?color+'0a':'transparent'};opacity:${isFuture?'0.3':'1'};">
-        <div style="width:36px;font-size:13px;font-weight:${isCurrentMonth?'700':'500'};color:${isCurrentMonth?color:'#8e8e93'};font-family:'Manrope',sans-serif;flex-shrink:0;">${RU_M[m]}</div>
-        <div style="flex:1;height:6px;background:#f2f2f7;border-radius:4px;overflow:hidden;">
+        <div style="width:36px;font-size:13px;font-weight:${isCurrentMonth?'700':'500'};color:${isCurrentMonth?color:'#8a8178'};font-family:'Manrope',sans-serif;flex-shrink:0;">${RU_M[m]}</div>
+        <div style="flex:1;height:6px;background:#f1ece2;border-radius:4px;overflow:hidden;">
           <div style="width:${isFuture?0:pct}%;height:100%;background:${color};border-radius:4px;transition:width .6s cubic-bezier(0.34,1.56,0.64,1);"></div>
         </div>
         <div style="min-width:88px;text-align:right;">
-          <div style="font-size:14px;font-weight:${isCurrentMonth?'700':'600'};color:${isFuture?'#c7c7cc':isCurrentMonth?color:'#1c1c1e'};font-family:'Outfit',sans-serif;letter-spacing:-0.02em;">${isFuture?'—':'+'+fmt(amt)+' ₪'}</div>
-          ${monthDiff!==null&&amt>0&&!isFuture?`<div style="font-size:10px;color:${monthDiff>=0?'#1a4a35':'#E88D67'};font-weight:600;">${monthDiff>=0?'+':''}${monthDiff}%</div>`:''}
+          <div style="font-size:14px;font-weight:${isCurrentMonth?'700':'600'};color:${isFuture?'#bdb3a4':isCurrentMonth?color:'#221f1a'};font-family:'Unbounded','Manrope',sans-serif;letter-spacing:-0.03em;">${isFuture?'—':'+'+fmt(amt)+' ₪'}</div>
+          ${monthDiff!==null&&amt>0&&!isFuture?`<div style="font-size:10px;color:${monthDiff>=0?'#1a4a35':'#c0563a'};font-weight:600;">${monthDiff>=0?'+':''}${monthDiff}%</div>`:''}
         </div>
       </div>`;
   }).join("");
@@ -1360,19 +1370,19 @@ function txRenderCal(){
     const isFuture=iso>todayISO;
     const isToday=iso===todayISO;
     const isSel=iso===txDate;
-    let bg="transparent", color=isFuture?"#d0d0d8":"#1c1c1e", fw="400", extra="";
+    let bg="transparent", color=isFuture?"#d0d0d8":"#221f1a", fw="400", extra="";
     if(isSel){ bg="#1a4a35"; color="#fff"; fw="700"; }
     else if(isToday){ extra="box-shadow:0 0 0 2px #1a4a35;"; }
     cells+=`<div onclick="${isFuture?"":"txPickDay('"+iso+"')"}" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;background:${bg};color:${color};font-size:14px;font-weight:${fw};font-family:'Manrope',sans-serif;cursor:${isFuture?"default":"pointer"};${extra}">${d}</div>`;
   }
   wrap.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <button onclick="txCalMonth--;if(txCalMonth<0){txCalMonth=11;txCalYear--;}txRenderCal()" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #e8e8e8;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
+      <button onclick="txCalMonth--;if(txCalMonth<0){txCalMonth=11;txCalYear--;}txRenderCal()" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #e8e1d4;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
       <div style="font-weight:600;font-size:15px;font-family:'Manrope',sans-serif;">${RU_MONTHS_FULL[txCalMonth]} ${txCalYear}</div>
-      <button onclick="txCalMonth++;if(txCalMonth>11){txCalMonth=0;txCalYear++;}txRenderCal()" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #e8e8e8;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
+      <button onclick="txCalMonth++;if(txCalMonth>11){txCalMonth=0;txCalYear++;}txRenderCal()" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #e8e1d4;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
-      ${days.map(d=>`<div style="text-align:center;font-size:11px;color:#8e8e93;font-weight:600;font-family:'Manrope',sans-serif;padding:3px 0;">${d}</div>`).join("")}
+      ${days.map(d=>`<div style="text-align:center;font-size:11px;color:#8a8178;font-weight:600;font-family:'Manrope',sans-serif;padding:3px 0;">${d}</div>`).join("")}
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${cells}</div>`;
 }
@@ -1393,13 +1403,13 @@ function setType(t){
     txCat=ECATS[0];
     el.innerHTML=`
       <div class="lbl">Описание</div>
-      <input id="tx-note" type="text" placeholder="напр. Wolt, такси, iPhone" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;margin-bottom:18px;">
+      <input id="tx-note" type="text" placeholder="напр. Wolt, такси, iPhone" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;margin-bottom:18px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="lbl" style="margin-bottom:0;">Категория</div>
               </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
         ${ECATS.map((c,i)=>{
-          const color=(CATEGORY_META[c]||{color:"#1c1c1e"}).color;
+          const color=(CATEGORY_META[c]||{color:"#221f1a"}).color;
           const sel=i===0;
           return `<button class="chip" onclick="pickCat(this,'${c}')" style="display:flex;align-items:center;gap:6px;${sel?`background:${color}18;border-color:${color};color:${color};transform:scale(1.04);`:''}">${catIcon(c,16)}${c}</button>`;
         }).join("")}
@@ -1413,7 +1423,7 @@ function setType(t){
       </div>
       <div id="inc-note" style="display:none;">
         <div class="lbl">Описание</div>
-        <input id="tx-note" type="text" placeholder="Укажи источник" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;margin-bottom:18px;">
+        <input id="tx-note" type="text" placeholder="Укажи источник" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;margin-bottom:18px;">
       </div>`;
   }
 }
@@ -1424,12 +1434,12 @@ function pickCat(btn,c){
   // Reset all chips
   document.querySelectorAll("#tx-extra .chip").forEach(b=>{
     b.style.background="#fff";
-    b.style.borderColor="#e8e8e8";
-    b.style.color="#1c1c1e";
+    b.style.borderColor="#e8e1d4";
+    b.style.color="#221f1a";
     b.style.transform="";
   });
   // Apply light brand color to selected - icon stays visible
-  const color=(CATEGORY_META[c]||{color:"#1c1c1e"}).color;
+  const color=(CATEGORY_META[c]||{color:"#221f1a"}).color;
   btn.style.background=color+"18";
   btn.style.borderColor=color;
   btn.style.color=color;
@@ -1663,7 +1673,7 @@ function refreshRecurMode(){
   ].forEach(({el,active})=>{
     if(!el) return;
     el.style.background=active?"#fff":"transparent";
-    el.style.color=active?"#1c1c1e":"#8e8e93";
+    el.style.color=active?"#221f1a":"#8a8178";
     el.style.boxShadow=active?"0 1px 4px rgba(0,0,0,0.1)":"none";
   });
   if(subPanel) subPanel.style.display=isSub?"block":"none";
@@ -1696,20 +1706,20 @@ function renderSubPickerInRecur(){
   const el=document.getElementById("recur-sub-list");
   if(!el) return;
   if(subs.length===0){
-    el.innerHTML=`<div style="padding:24px;text-align:center;color:#8e8e93;font-size:14px;line-height:1.5;">Нет подписок<br><span style="font-size:12px;">Сначала добавьте подписку в разделе выше</span></div>`;
+    el.innerHTML=`<div style="padding:24px;text-align:center;color:#8a8178;font-size:14px;line-height:1.5;">Нет подписок<br><span style="font-size:12px;">Сначала добавьте подписку в разделе выше</span></div>`;
     return;
   }
   el.innerHTML=subs.map((s,i)=>{
     const sel=recurSelSubId===s.id;
-    return `<div onclick="pickRecurSub(${s.id})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;${i<subs.length-1?"border-bottom:1px solid #f2f2f7;":""}cursor:pointer;background:${sel?"#f0faf4":"#fff"};transition:background .15s;">
+    return `<div onclick="pickRecurSub(${s.id})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;${i<subs.length-1?"border-bottom:1px solid #f1ece2;":""}cursor:pointer;background:${sel?"#e8f6ee":"#fff"};transition:background .15s;">
       <div style="width:44px;height:44px;border-radius:14px;background:${s.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svcIcon(s.ic||'custom',26)}</div>
       <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;font-size:14px;color:#1c1c1e;">${s.n}</div>
-        <div style="font-size:12px;color:#8e8e93;margin-top:2px;">${s.day}-е число · ${fmt(s.amt)} ₪/мес.</div>
+        <div style="font-weight:600;font-size:14px;color:#221f1a;">${s.n}</div>
+        <div style="font-size:12px;color:#8a8178;margin-top:2px;">${s.day}-е число · ${fmt(s.amt)} ₪/мес.</div>
       </div>
       ${sel
         ?`<div style="width:22px;height:22px;border-radius:50%;background:#1a4a35;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>`
-        :`<div style="width:22px;height:22px;border-radius:50%;border:1.5px solid #e8e8e8;flex-shrink:0;"></div>`
+        :`<div style="width:22px;height:22px;border-radius:50%;border:1.5px solid #e8e1d4;flex-shrink:0;"></div>`
       }
     </div>`;
   }).join("");
@@ -1725,9 +1735,9 @@ function refreshRecurCats(){
   if(!el) return;
   const cats=recurType==="expense"?ECATS:ICATS;
   el.innerHTML=cats.map(c=>{
-    const color=(CATEGORY_META[c]||{color:"#1c1c1e"}).color;
+    const color=(CATEGORY_META[c]||{color:"#221f1a"}).color;
     const sel=c===recurCat;
-    return `<button onclick="recurCat='${c}';refreshRecurCats()" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:50px;border:1.5px solid ${sel?color:"#e8e8e8"};background:${sel?color+"18":"#fff"};color:${sel?color:"#1c1c1e"};font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">${catIcon(c,14)}${c}</button>`;
+    return `<button onclick="recurCat='${c}';refreshRecurCats()" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:50px;border:1.5px solid ${sel?color:"#e8e1d4"};background:${sel?color+"18":"#fff"};color:${sel?color:"#221f1a"};font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">${catIcon(c,14)}${c}</button>`;
   }).join("");
 }
 
@@ -1740,8 +1750,8 @@ function setRecurFreq(f){
     if(!btn) return;
     const sel=k===f;
     btn.style.background=sel?"#1a4a35":"#fff";
-    btn.style.color=sel?"#fff":"#1c1c1e";
-    btn.style.borderColor=sel?"#1a4a35":"#e8e8e8";
+    btn.style.color=sel?"#fff":"#221f1a";
+    btn.style.borderColor=sel?"#1a4a35":"#e8e1d4";
   });
   const wrap=document.getElementById("recur-day-wrap");
   const label=document.getElementById("recur-day-label");
@@ -1753,14 +1763,14 @@ function setRecurFreq(f){
     label.textContent="День недели";
     sel.innerHTML=WEEKDAYS.map((d,i)=>{
       const active=(i+1)===recurWeekDay;
-      return `<button onclick="recurWeekDay=${i+1};setRecurFreq('weekly')" style="padding:8px 14px;border-radius:50px;border:1.5px solid ${active?"#1a4a35":"#e8e8e8"};background:${active?"#1a4a35":"#fff"};color:${active?"#fff":"#1c1c1e"};font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">${d}</button>`;
+      return `<button onclick="recurWeekDay=${i+1};setRecurFreq('weekly')" style="padding:8px 14px;border-radius:50px;border:1.5px solid ${active?"#1a4a35":"#e8e1d4"};background:${active?"#1a4a35":"#fff"};color:${active?"#fff":"#221f1a"};font-family:'Manrope',sans-serif;font-size:13px;font-weight:500;cursor:pointer;">${d}</button>`;
     }).join("");
   } else {
     label.textContent="День месяца";
     sel.style.cssText="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;";
     sel.innerHTML=Array.from({length:31},(_,i)=>i+1).map(d=>{
       const active=d===recurDay;
-      return `<button onclick="recurDay=${d};setRecurFreq('monthly')" style="aspect-ratio:1;border-radius:50%;border:1.5px solid ${active?"#1a4a35":"#e8e8e8"};background:${active?"#1a4a35":"#fff"};color:${active?"#fff":"#1c1c1e"};font-family:'Manrope',sans-serif;font-size:11px;font-weight:500;cursor:pointer;">${d}</button>`;
+      return `<button onclick="recurDay=${d};setRecurFreq('monthly')" style="aspect-ratio:1;border-radius:50%;border:1.5px solid ${active?"#1a4a35":"#e8e1d4"};background:${active?"#1a4a35":"#fff"};color:${active?"#fff":"#221f1a"};font-family:'Manrope',sans-serif;font-size:11px;font-weight:500;cursor:pointer;">${d}</button>`;
     }).join("");
   }
 }
@@ -1882,7 +1892,7 @@ function buildSubModal(titleText, name, amt, day, svcIndex, isEdit){
 function _applySubAutoChargUI(){
   const toggle=document.getElementById("sub-autochg-toggle");
   const knob=document.getElementById("sub-autochg-knob");
-  if(toggle) toggle.style.background=subAutoCharge?"#1a4a35":"#e8e8e8";
+  if(toggle) toggle.style.background=subAutoCharge?"#1a4a35":"#e8e1d4";
   if(knob) knob.style.transform=subAutoCharge?"translateX(20px)":"translateX(0)";
 }
 
@@ -1982,7 +1992,7 @@ function openGoal(){
 function pickGoalIcon(btn,ic){
   selGoalIcon=ic;
   document.querySelectorAll("#goal-icons button").forEach(b=>{b.style.borderColor="#ebebeb";b.style.background="#fafafa";});
-  btn.style.borderColor="#1a4a35"; btn.style.background="#f0faf4";
+  btn.style.borderColor="#1a4a35"; btn.style.background="#e8f6ee";
 }
 function pickGoalColor(btn,c){
   selGoalColor=c;
@@ -2004,11 +2014,11 @@ function withdraw(id){
   if(!g)return;
   document.getElementById("withdraw-amt").value="";
   document.getElementById("withdraw-goal-info").innerHTML=`
-    <div style="display:flex;align-items:center;gap:12px;background:#f7f6f2;border-radius:14px;padding:12px 14px;">
-      <div style="width:44px;height:44px;border-radius:12px;background:#f7f6f2;border:1.5px solid #e8e8e8;display:flex;align-items:center;justify-content:center;font-size:24px;">${g.icon}</div>
+    <div style="display:flex;align-items:center;gap:12px;background:#f4f1ea;border-radius:14px;padding:12px 14px;">
+      <div style="width:44px;height:44px;border-radius:12px;background:#f4f1ea;border:1.5px solid #e8e1d4;display:flex;align-items:center;justify-content:center;font-size:24px;">${g.icon}</div>
       <div>
         <div style="font-weight:600;font-size:15px;">${g.name}</div>
-        <div style="font-size:13px;color:#8e8e93;margin-top:2px;">Доступно: ${fmt(g.saved)} ₪</div>
+        <div style="font-size:13px;color:#8a8178;margin-top:2px;">Доступно: ${fmt(g.saved)} ₪</div>
       </div>
     </div>`;
   openSheet("withdraw");
@@ -2029,11 +2039,11 @@ function addSaving(id){
   if(!g)return;
   document.getElementById("saving-amt").value="";
   document.getElementById("saving-goal-info").innerHTML=`
-    <div style="display:flex;align-items:center;gap:12px;background:#f7f6f2;border-radius:14px;padding:12px 14px;">
+    <div style="display:flex;align-items:center;gap:12px;background:#f4f1ea;border-radius:14px;padding:12px 14px;">
       <div style="width:44px;height:44px;border-radius:12px;background:${g.color||'#1a4a35'};display:flex;align-items:center;justify-content:center;font-size:24px;">${g.icon}</div>
       <div>
         <div style="font-weight:600;font-size:15px;">${g.name}</div>
-        <div style="font-size:13px;color:#8e8e93;margin-top:2px;">${fmt(g.saved)} ₪ из ${fmt(g.target)} ₪</div>
+        <div style="font-size:13px;color:#8a8178;margin-top:2px;">${fmt(g.saved)} ₪ из ${fmt(g.target)} ₪</div>
       </div>
     </div>`;
   openSheet("saving");
@@ -2067,7 +2077,7 @@ function editGoal(id){
 function pickEditIcon(btn,ic){
   editGoalIcon=ic;
   document.querySelectorAll("#edit-goal-icons button").forEach(b=>{b.style.borderColor="#e0e0d8";b.style.background="#fff";});
-  btn.style.borderColor="#1a4a35"; btn.style.background="#f0faf4";
+  btn.style.borderColor="#1a4a35"; btn.style.background="#e8f6ee";
 }
 function pickEditColor(btn,c){
   editGoalColor=c;
@@ -2183,8 +2193,8 @@ const c=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${catColor}"
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      ${[["trending-up","#f0faf4","Доход (месяц)",fmt(mInc)+"  ₪","#1a4a35"],
-         ["trending-down","#fff0f0","Расход (месяц)",fmt(mExp)+" ₪","#E88D67"],
+      ${[["trending-up","#e8f6ee","Доход (месяц)",fmt(mInc)+"  ₪","#1a4a35"],
+         ["trending-down","#fbeae4","Расход (месяц)",fmt(mExp)+" ₪","#c0563a"],
          ["wallet","#f5f3ee","Ср. расход/день",fmt(avg)+" ₪","#1a1a1a"],
          ["trending-up","#f0f5f0","К прошлому мес.","—","#aaa"]].map(([ic,bg,lb,vl,cl])=>`
         <div class="card" style="padding:14px;">
@@ -2197,7 +2207,7 @@ const c=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${catColor}"
     </div>
     ${top?`<div class="card" style="display:flex;align-items:center;gap:13px;padding:14px 16px;">
       <div style="width:44px;height:44px;border-radius:13px;background:#fff0f4;display:flex;align-items:center;justify-content:center;font-size:22px;">${catIcon(top[0],22)}</div>
-      <div style="flex:1;"><div style="font-size:12px;color:#8e8e93;">Топ категория</div><div style="font-weight:700;font-size:16px;margin-top:2px;">${top[0]}</div></div>
+      <div style="flex:1;"><div style="font-size:12px;color:#8a8178;">Топ категория</div><div style="font-weight:700;font-size:16px;margin-top:2px;">${top[0]}</div></div>
       <div style="font-weight:700;font-size:17px;">${fmt(top[1])} ₪</div>
     </div>`:""}`;
   openSheet("overview");
@@ -2216,8 +2226,8 @@ function openHistDetail(type){
   document.getElementById(bodyId).innerHTML=`
     <div style="background:#fff;border-radius:20px;padding:20px 20px 16px;">
       <div style="margin-bottom:8px;">
-        <div class="font-display" style="font-size:28px;font-weight:700;color:${isExp?"#E88D67":"#1a4a35"};letter-spacing:-0.04em;">${isExp?"":"+"}${fmt(total)} ₪</div>
-        <div style="font-size:14px;color:#8e8e93;margin-top:2px;">${isExp?"Траты":"Доходы"}</div>
+        <div class="font-display" style="font-size:28px;font-weight:700;color:${isExp?"#c0563a":"#1a4a35"};letter-spacing:-0.04em;">${isExp?"":"+"}${fmt(total)} ₪</div>
+        <div style="font-size:14px;color:#8a8178;margin-top:2px;">${isExp?"Траты":"Доходы"}</div>
       </div>
       <div style="margin:4px 0 16px;">${histDonut(cats)}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 10px;">
@@ -2225,8 +2235,8 @@ function openHistDetail(type){
         <div style="display:flex;align-items:center;gap:8px;">
           ${catTile(cat,16,34)}
           <div style="min-width:0;">
-            <div style="font-size:12px;color:#8e8e93;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${cat}</div>
-            <div style="font-size:13px;font-weight:600;color:${isExp?"#E88D67":"#1a4a35"};white-space:nowrap;">${isExp?"":"+"}${fmt(val)} ₪</div>
+            <div style="font-size:12px;color:#8a8178;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${cat}</div>
+            <div style="font-size:13px;font-weight:600;color:${isExp?"#c0563a":"#1a4a35"};white-space:nowrap;">${isExp?"":"+"}${fmt(val)} ₪</div>
           </div>
         </div>`).join("")}
       </div>
@@ -2254,12 +2264,12 @@ function miniDonut(data, size=80, strokeW=10, centerLine1=null, centerLine2=null
   const innerR=r-strokeW/2-6;
   const fs1=Math.round(size*0.12), fs2=Math.round(size*0.09);
   const centerEl=centerLine1?`
-    <text x="${cx}" y="${centerLine2?cx-fs1*0.6:cx}" text-anchor="middle" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="${fs1}" font-weight="700" fill="#1c1c1e">${centerLine1}</text>
-    ${centerLine2?`<text x="${cx}" y="${cx+fs1*0.9}" text-anchor="middle" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="${fs2}" font-weight="500" fill="#8e8e93">${centerLine2}</text>`:''}
+    <text x="${cx}" y="${centerLine2?cx-fs1*0.6:cx}" text-anchor="middle" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="${fs1}" font-weight="700" fill="#221f1a">${centerLine1}</text>
+    ${centerLine2?`<text x="${cx}" y="${cx+fs1*0.9}" text-anchor="middle" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="${fs2}" font-weight="500" fill="#8a8178">${centerLine2}</text>`:''}
   `:'';
 
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="filter:drop-shadow(0 4px 12px rgba(0,0,0,0.08));">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f2f2f7" stroke-width="${strokeW}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1ece2" stroke-width="${strokeW}"/>
     <circle cx="${cx}" cy="${cy}" r="${innerR}" fill="#fafaf8" stroke="#f0ede8" stroke-width="1"/>
     ${slices}
     ${centerEl}
@@ -2298,11 +2308,11 @@ function histDonut(cats){
   const labels=segs.filter(s=>s.pct>=5).map(s=>{
     const lx=cx+labelR*Math.cos(s.midA), ly=cy+labelR*Math.sin(s.midA);
     const anchor=Math.cos(s.midA)>0.2?'start':Math.cos(s.midA)<-0.2?'end':'middle';
-    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="11" font-weight="600" fill="#8e8e93">${s.pct}%</text>`;
+    return `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="middle" font-family="'Manrope',sans-serif" font-size="11" font-weight="600" fill="#8a8178">${s.pct}%</text>`;
   }).join("");
   const innerR=r-strokeW/2-8;
   return `<svg width="100%" viewBox="0 0 ${vb} ${vb}" style="display:block;max-width:${vb}px;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(0,0,0,0.09));">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f2f2f7" stroke-width="${strokeW}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f1ece2" stroke-width="${strokeW}"/>
     <circle cx="${cx}" cy="${cy}" r="${innerR}" fill="#fafaf8" stroke="#f0ede8" stroke-width="1.5"/>
     ${slices}
     ${icons}
@@ -2364,18 +2374,18 @@ function render(){
 
     <div>
       <div class="row" style="margin-bottom:4px;">
-        <div style="font-weight:600;font-size:17px;color:#1c1c1e;font-family:'Manrope',sans-serif;">Подписки</div>
-        <button class="btn-g" onclick="openSub()" style="border-radius:50%;width:38px;height:38px;padding:0;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,74,53,0.25);">+</button>
+        <div style="font-weight:600;font-size:17px;color:#221f1a;font-family:'Manrope',sans-serif;">Подписки</div>
+        <button class="btn-g" onclick="openSub()" aria-label="Добавить подписку" style="border-radius:50%;width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,74,53,0.25);"><svg width="18" height="18"><use href="#ico-plus"/></svg></button>
       </div>
-      ${subs.length>0?`<div style="font-size:13px;color:#8e8e93;margin-bottom:12px;">В сумме ${fmt(tSubs)} ₪ / мес. · ${subs.length} ${subs.length===1?'сервис':subs.length<5?'сервиса':'сервисов'}</div>`:`<div style="margin-bottom:12px;"></div>`}
+      ${subs.length>0?`<div style="font-size:13px;color:#8a8178;margin-bottom:12px;">В сумме ${fmt(tSubs)} ₪ / мес. · ${subs.length} ${subs.length===1?'сервис':subs.length<5?'сервиса':'сервисов'}</div>`:`<div style="margin-bottom:12px;"></div>`}
       ${subs.length===0?`
       <div onclick="openSub()" style="border:2px dashed #c8e6d4;border-radius:20px;padding:18px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;background:#fff;">
-        <div style="width:48px;height:48px;border-radius:14px;background:#f2f2f7;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;"><svg width="28" height="28" color="#c7c7cc"><use href="#ico-film"/></svg></div>
+        <div style="width:48px;height:48px;border-radius:14px;background:#f1ece2;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;"><svg width="28" height="28" color="#bdb3a4"><use href="#ico-film"/></svg></div>
         <div style="flex:1;">
-          <div style="font-weight:600;font-size:16px;color:#1c1c1e;">Добавьте первую подписку</div>
-          <div style="font-size:13px;color:#8e8e93;margin-top:3px;line-height:1.4;">Netflix, Spotify, YouTube и другие — следите за датами списаний</div>
+          <div style="font-weight:600;font-size:16px;color:#221f1a;">Добавьте первую подписку</div>
+          <div style="font-size:13px;color:#8a8178;margin-top:3px;line-height:1.4;">Netflix, Spotify, YouTube и другие — следите за датами списаний</div>
         </div>
-        <div style="font-size:22px;color:#8e8e93;">+</div>
+        <div style="color:#8a8178;display:flex;"><svg width="20" height="20"><use href="#ico-plus"/></svg></div>
       </div>`:
       `<div class="scroll-x" style="padding-bottom:4px;">
         ${subs.map(s=>`
@@ -2385,14 +2395,14 @@ function render(){
               ${(s.autoCharge||recurrings.some(r=>r.subId===s.id))?`<div style="width:22px;height:22px;border-radius:50%;background:#1a4a35;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;"><svg width="11" height="11" color="#fff"><use href="#ico-bolt"/></svg></div>`:`<div style="width:22px;"></div>`}
             </div>
             <div>
-              <div style="font-weight:700;font-size:14px;color:#1c1c1e;margin-bottom:2px;">${s.n}</div>
-              <div style="font-size:12px;color:#c7c7cc;">${s.day} ${MONTHS[nowM]}</div>
+              <div style="font-weight:700;font-size:14px;color:#221f1a;margin-bottom:2px;">${s.n}</div>
+              <div style="font-size:12px;color:#bdb3a4;">${s.day} ${MONTHS[nowM]}</div>
             </div>
-            <div style="font-weight:700;font-size:17px;color:#1a4a35;">${s.amt} ₪<span style="font-size:12px;font-weight:400;color:#c7c7cc;"> / мес.</span></div>
+            <div style="font-weight:700;font-size:17px;color:#1a4a35;">${s.amt} ₪<span style="font-size:12px;font-weight:400;color:#bdb3a4;"> / мес.</span></div>
           </div>`).join("")}
         <div onclick="openSub()" style="width:150px;flex:0 0 150px;min-height:160px;border-radius:24px;border:2px dashed #EFECE6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s;" onmouseenter="this.style.borderColor='#1a4a35'" onmouseleave="this.style.borderColor='#EFECE6'">
-          <div style="width:40px;height:40px;border-radius:50%;background:#f2f2f7;display:flex;align-items:center;justify-content:center;font-size:20px;color:#8e8e93;">+</div>
-          <div style="font-size:13px;color:#8e8e93;font-weight:500;text-align:center;padding:0 12px;">Добавить сервис</div>
+          <div style="width:40px;height:40px;border-radius:50%;background:#f1ece2;display:flex;align-items:center;justify-content:center;color:#8a8178;"><svg width="18" height="18"><use href="#ico-plus"/></svg></div>
+          <div style="font-size:13px;color:#8a8178;font-weight:500;text-align:center;padding:0 12px;">Добавить сервис</div>
         </div>
       </div>`}
     </div>
@@ -2400,37 +2410,37 @@ function render(){
     <!-- Recurring transactions -->
     <div>
       <div class="row" style="margin-bottom:4px;">
-        <div style="font-weight:600;font-size:17px;color:#1c1c1e;font-family:'Manrope',sans-serif;display:flex;align-items:center;gap:8px;"><svg width="18" height="18" color="#1a4a35"><use href="#ico-repeat"/></svg>Автоплатежи</div>
-        <button class="btn-g" onclick="openRecur()" style="border-radius:50%;width:38px;height:38px;padding:0;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,74,53,0.25);">+</button>
+        <div style="font-weight:600;font-size:17px;color:#221f1a;font-family:'Manrope',sans-serif;display:flex;align-items:center;gap:8px;"><svg width="18" height="18" color="#1a4a35"><use href="#ico-repeat"/></svg>Автоплатежи</div>
+        <button class="btn-g" onclick="openRecur()" aria-label="Добавить автоплатёж" style="border-radius:50%;width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,74,53,0.25);"><svg width="18" height="18"><use href="#ico-plus"/></svg></button>
       </div>
       ${recurrings.length===0?`
       <div onclick="openRecur()" style="border:2px dashed #c8e6d4;border-radius:20px;padding:18px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;background:#fff;">
-        <div style="width:44px;height:44px;border-radius:50%;background:#f0faf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="24" height="24" color="#1a4a35"><use href="#ico-repeat"/></svg></div>
-        <div><div style="font-weight:600;font-size:15px;color:#1c1c1e;">Добавьте автоплатёж</div><div style="font-size:13px;color:#8e8e93;margin-top:2px;">Арнона, Wolt, зарплата…</div></div>
+        <div style="width:44px;height:44px;border-radius:50%;background:#e8f6ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="24" height="24" color="#1a4a35"><use href="#ico-repeat"/></svg></div>
+        <div><div style="font-weight:600;font-size:15px;color:#221f1a;">Добавьте автоплатёж</div><div style="font-size:13px;color:#8a8178;margin-top:2px;">Арнона, Wolt, зарплата…</div></div>
       </div>`:(()=>{
         const LIMIT=3;
         const show=recurExpanded?recurrings:recurrings.slice(0,LIMIT);
         const hidden=recurrings.length-LIMIT;
         return `<div style="background:#fff;border-radius:20px;overflow:hidden;border:1.5px solid #EFECE6;">
           ${show.map((r,i)=>`
-          <div onclick="editRecur(${r.id})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;${i<show.length-1||(!recurExpanded&&hidden>0)?"border-bottom:1px solid #f2f2f7;":""}cursor:pointer;">
+          <div onclick="editRecur(${r.id})" style="display:flex;align-items:center;gap:12px;padding:14px 16px;${i<show.length-1||(!recurExpanded&&hidden>0)?"border-bottom:1px solid #f1ece2;":""}cursor:pointer;">
             ${r.subId?(()=>{const s=subs.find(s=>s.id===r.subId);return s?`<div style="width:44px;height:44px;border-radius:14px;background:${s.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svcIcon(s.ic||'custom',24)}</div>`:catTile(r.cat,20,44);})():catTile(r.cat,20,44)}
             <div style="flex:1;min-width:0;">
-              <div style="font-weight:600;font-size:14px;color:#1c1c1e;display:flex;align-items:center;gap:6px;">${r.note||r.cat}${r.subId?`<span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#1a4a35;flex-shrink:0;"><svg width="9" height="9" color="#fff"><use href="#ico-bolt"/></svg></span>`:""}</div>
-              <div style="font-size:12px;color:#8e8e93;margin-top:2px;">${recurLabel(r)}</div>
+              <div style="font-weight:600;font-size:14px;color:#221f1a;display:flex;align-items:center;gap:6px;">${r.note||r.cat}${r.subId?`<span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#1a4a35;flex-shrink:0;"><svg width="9" height="9" color="#fff"><use href="#ico-bolt"/></svg></span>`:""}</div>
+              <div style="font-size:12px;color:#8a8178;margin-top:2px;">${recurLabel(r)}</div>
             </div>
             <div style="text-align:right;flex-shrink:0;">
-              <div style="font-weight:700;font-size:15px;color:${r.type==="income"?"#1a4a35":"#E88D67"};">${r.type==="income"?"+":"−"}${fmt(r.amount)} ₪</div>
+              <div style="font-weight:700;font-size:15px;color:${r.type==="income"?"#1a4a35":"#c0563a"};">${r.type==="income"?"+":"−"}${fmt(r.amount)} ₪</div>
             </div>
           </div>`).join("")}
           ${!recurExpanded&&hidden>0?`
-          <div onclick="recurExpanded=true;render()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;cursor:pointer;color:#1a4a35;font-weight:600;font-size:13px;font-family:'Manrope',sans-serif;border-top:1px solid #f2f2f7;">
+          <div onclick="recurExpanded=true;render()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;cursor:pointer;color:#1a4a35;font-weight:600;font-size:13px;font-family:'Manrope',sans-serif;border-top:1px solid #f1ece2;">
             Ещё ${hidden} ${hidden===1?"правило":hidden<5?"правила":"правил"}
             <svg width="14" height="14" color="#1a4a35" style="transform:rotate(90deg)"><use href="#ico-chevron-right"/></svg>
           </div>`:recurExpanded&&recurrings.length>LIMIT?`
-          <div onclick="recurExpanded=false;render()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;cursor:pointer;color:#8e8e93;font-weight:600;font-size:13px;font-family:'Manrope',sans-serif;border-top:1px solid #f2f2f7;">
+          <div onclick="recurExpanded=false;render()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;cursor:pointer;color:#8a8178;font-weight:600;font-size:13px;font-family:'Manrope',sans-serif;border-top:1px solid #f1ece2;">
             Свернуть
-            <svg width="14" height="14" color="#8e8e93" style="transform:rotate(-90deg)"><use href="#ico-chevron-right"/></svg>
+            <svg width="14" height="14" color="#8a8178" style="transform:rotate(-90deg)"><use href="#ico-chevron-right"/></svg>
           </div>`:""}
         </div>`;
       })()}
@@ -2438,8 +2448,8 @@ function render(){
 
     <div>
       <div class="row" style="margin-bottom:10px;">
-        <div style="font-weight:600;font-size:17px;color:#1c1c1e;font-family:'Manrope',sans-serif;">Сравнение кошельков</div>
-        <div style="font-size:12px;color:#8e8e93;">за всё время</div>
+        <div style="font-weight:600;font-size:17px;color:#221f1a;font-family:'Manrope',sans-serif;">Сравнение кошельков</div>
+        <div style="font-size:12px;color:#8a8178;">за всё время</div>
       </div>
       <div class="card" style="padding:4px 0;">
         ${[
@@ -2447,12 +2457,12 @@ function render(){
           {ic:"budget",bg:"#f5f3ee",t:"Доход примерно равен",s:"в этом месяце"},
           {ic:"target",bg:"#fff0eb",t:"Партнёр чаще тратит на: <span style='color:#e07a3a'>Рестораны</span>",s:"топ-категория партнёра"},
         ].map((r,i)=>`
-          <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;${i<2?"border-bottom:1px solid #f2f2f7;":""}">
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 16px;${i<2?"border-bottom:1px solid #f1ece2;":""}">
             <div style="width:42px;height:42px;border-radius:13px;background:${r.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="22" height="22" color="#1a4a35"><use href="#ico-${r.ic}"/></svg></div>
-            <div><div style="font-weight:600;font-size:14px;">${r.t}</div><div style="font-size:12px;color:#8e8e93;margin-top:1px;">${r.s}</div></div>
+            <div><div style="font-weight:600;font-size:14px;">${r.t}</div><div style="font-size:12px;color:#8a8178;margin-top:1px;">${r.s}</div></div>
           </div>`).join("")}
         <div style="display:flex;align-items:flex-start;gap:8px;padding:10px 16px 13px;border-top:1px solid #f5f5f0;">
-          <svg width="16" height="16" color="#c7c7cc"><use href="#ico-lock"/></svg><div style="font-size:12px;color:#c7c7cc;line-height:1.4;">Только проценты и тренды — детали кошелька партнёра скрыты</div>
+          <svg width="16" height="16" color="#bdb3a4"><use href="#ico-lock"/></svg><div style="font-size:12px;color:#bdb3a4;line-height:1.4;">Только проценты и тренды — детали кошелька партнёра скрыты</div>
         </div>
       </div>
     </div>
@@ -2460,8 +2470,8 @@ function render(){
 
     <div>
       <div class="row" style="margin-bottom:14px;align-items:baseline;">
-        <div style="font-weight:600;font-size:17px;color:#1c1c1e;font-family:'Manrope',sans-serif;">Доходы</div>
-        <div style="font-size:14px;color:#8e8e93;font-weight:500;">${nowY} год</div>
+        <div style="font-weight:600;font-size:17px;color:#221f1a;font-family:'Manrope',sans-serif;">Доходы</div>
+        <div style="font-size:14px;color:#8a8178;font-weight:500;">${nowY} год</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         ${[
@@ -2475,23 +2485,23 @@ function render(){
             <!-- Icon + title row -->
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
               <div style="width:36px;height:36px;border-radius:12px;background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${catIcon(cat,20)}</div>
-              <div style="font-weight:700;font-size:15px;color:#1c1c1e;">${cat}</div>
+              <div style="font-weight:700;font-size:15px;color:#221f1a;">${cat}</div>
             </div>
             <!-- Month -->
-            <div class="font-tiny" style="color:#8e8e93;">За месяц</div>
+            <div class="font-tiny" style="color:#8a8178;">За месяц</div>
             <div class="font-display" style="font-size:22px;font-weight:600;color:${color};margin-top:2px;">+${fmt(mAmt)} <span style="font-size:13px;">₪</span></div>
             <div style="height:1px;background:#EFECE6;margin:8px 0;"></div>
             <!-- Year -->
-            <div class="font-tiny" style="color:#8e8e93;">За год</div>
-            <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-top:2px;">${fmt(yAmt)} <span style="font-size:12px;color:#8e8e93;">₪</span></div>
+            <div class="font-tiny" style="color:#8a8178;">За год</div>
+            <div style="font-size:15px;font-weight:600;color:#1a1a1a;margin-top:2px;">${fmt(yAmt)} <span style="font-size:12px;color:#8a8178;">₪</span></div>
           </div>`;}).join("")}
       </div>
     </div>
 
     <div>
-      <div style="font-weight:600;font-size:17px;color:#1c1c1e;font-family:'Manrope',sans-serif;margin-bottom:10px;">Последние операции</div>
+      <div style="font-weight:600;font-size:17px;color:#221f1a;font-family:'Manrope',sans-serif;margin-bottom:10px;">Последние операции</div>
       <div class="card" style="padding:0;overflow:hidden;">
-        ${txs.length===0?`<div style="text-align:center;color:#c7c7cc;padding:24px 0;font-size:13px;">Нет операций</div>`:
+        ${txs.length===0?`<div style="text-align:center;color:#bdb3a4;padding:24px 0;font-size:13px;">Нет операций</div>`:
           [...txs].reverse().slice(0,5).map(t=>`
           <div class="swipe-wrap" data-id="${t.id}">
             <div class="swipe-del-bg">
@@ -2504,10 +2514,10 @@ function render(){
                 ${catTile(t.cat,20,40)}
                 <div style="min-width:0;">
                   <div style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.note||t.cat}</div>
-                  <div style="font-size:11px;color:#c7c7cc;margin-top:1px;">${t.cat} · ${t.date.slice(8)} ${MONTHS[new Date(t.date).getMonth()]}</div>
+                  <div style="font-size:11px;color:#bdb3a4;margin-top:1px;">${t.cat} · ${t.date.slice(8)} ${MONTHS[new Date(t.date).getMonth()]}</div>
                 </div>
               </div>
-              <div style="font-weight:700;font-size:15px;color:${t.type==="income"?"#1a4a35":"#E88D67"};flex-shrink:0;">${t.type==="income"?"+":"-"}${fmt(t.amount)} ₪</div>
+              <div style="font-weight:700;font-size:15px;color:${t.type==="income"?"#1a4a35":"#c0563a"};flex-shrink:0;">${t.type==="income"?"+":"-"}${fmt(t.amount)} ₪</div>
             </div>
           </div>`).join("")}
       </div>
@@ -2522,10 +2532,10 @@ function render(){
     h=`
     <div class="row" style="align-items:flex-start;margin-bottom:16px;padding:0 2px;">
       <div>
-        <div style="font-size:12px;color:#8e8e93;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Накопления</div>
+        <div style="font-size:12px;color:#8a8178;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Накопления</div>
         <div style="font-weight:700;font-size:32px;letter-spacing:-0.5px;">Копилка</div>
       </div>
-      <button class="btn-g" onclick="openGoal()" style="border-radius:50%;width:44px;height:44px;padding:0;font-size:24px;display:flex;align-items:center;justify-content:center;margin-top:4px;box-shadow:0 4px 14px rgba(45,106,79,0.25);">+</button>
+      <button class="btn-g" onclick="openGoal()" aria-label="Создать цель" style="border-radius:50%;width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;margin-top:4px;box-shadow:0 4px 14px rgba(45,106,79,0.25);"><svg width="20" height="20"><use href="#ico-plus"/></svg></button>
     </div>
 
     <!-- Total saved card -->
@@ -2542,10 +2552,10 @@ function render(){
     </div>
 
     ${goals.length===0?`
-    <div style="background:#fff;border-radius:20px;padding:48px 24px;text-align:center;border:1.5px solid #f2f2f7;">
+    <div style="background:#fff;border-radius:20px;padding:48px 24px;text-align:center;border:1.5px solid #f1ece2;">
       <div style="margin-bottom:16px;"><svg width="80" height="80" color="#1a4a35"><use href="#ico-piggy"/></svg></div>
       <div style="font-weight:700;font-size:20px;margin-bottom:8px;">Начните копить</div>
-      <div style="color:#8e8e93;font-size:14px;line-height:1.5;margin-bottom:24px;">Создайте первую цель — например, «На отпуск» или «На новый телефон»</div>
+      <div style="color:#8a8178;font-size:14px;line-height:1.5;margin-bottom:24px;">Создайте первую цель — например, «На отпуск» или «На новый телефон»</div>
       <button class="btn-g" onclick="openGoal()" style="width:100%;padding:15px;font-size:16px;border-radius:50px;">Создать цель</button>
     </div>`:
     goals.map(g=>{
@@ -2557,24 +2567,24 @@ function render(){
         const diff=Math.ceil((d-now)/(1000*60*60*24));
         deadlineStr=diff>0?` · осталось ${diff} дн.`:` · срок истёк`;
       }
-      return `<div style="background:#fff;border-radius:20px;padding:18px 18px 16px;border:1.5px solid #f2f2f7;">
+      return `<div style="background:#fff;border-radius:20px;padding:18px 18px 16px;border:1.5px solid #f1ece2;">
         <!-- Header row -->
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-          <div style="width:52px;height:52px;border-radius:16px;background:#f7f6f2;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">${g.icon}</div>
+          <div style="width:52px;height:52px;border-radius:16px;background:#f4f1ea;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">${g.icon}</div>
           <div style="flex:1;min-width:0;">
             <div style="font-weight:700;font-size:16px;color:#1a1a1a;">${g.name}</div>
-            <div style="font-size:13px;color:#8e8e93;margin-top:2px;">${fmt(g.saved)} ₪ / ${fmt(g.target)} ₪${deadlineStr}</div>
+            <div style="font-size:13px;color:#8a8178;margin-top:2px;">${fmt(g.saved)} ₪ / ${fmt(g.target)} ₪${deadlineStr}</div>
           </div>
           <button onclick="editGoal(${g.id})" style="width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s;" onmousedown="this.style.background='rgba(0,0,0,0.12)'" onmouseup="this.style.background='rgba(0,0,0,0.06)'"><svg width="16" height="16" color="#666"><use href="#ico-edit"/></svg></button>
         </div>
         <!-- Progress bar -->
-        <div style="background:#f7f6f2;border-radius:6px;height:8px;margin-bottom:16px;">
+        <div style="background:#f4f1ea;border-radius:6px;height:8px;margin-bottom:16px;">
           <div style="background:${color};height:8px;border-radius:6px;width:${p}%;transition:width .5s;"></div>
         </div>
         <!-- Buttons -->
         <div style="display:flex;gap:10px;">
           <button onclick="addSaving(${g.id})" style="flex:1;padding:13px;background:${color};color:#fff;border:none;border-radius:50px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">+ Пополнить</button>
-          <button onclick="withdraw(${g.id})" style="flex:1;padding:13px;background:#fff;color:#1a1a1a;border:1.5px solid #e8e8e8;border-radius:50px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">− Снять</button>
+          <button onclick="withdraw(${g.id})" style="flex:1;padding:13px;background:#fff;color:#1a1a1a;border:1.5px solid #e8e1d4;border-radius:50px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">− Снять</button>
         </div>
       </div>`;}).join("")}`;
   }
@@ -2585,55 +2595,55 @@ function render(){
     h=`
     <div class="row" style="align-items:flex-start;margin-bottom:4px;padding:0 2px;">
       <div>
-        <div style="font-size:12px;color:#8e8e93;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Цели</div>
+        <div style="font-size:12px;color:#8a8178;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">Цели</div>
         <div class="font-display" style="font-weight:600;font-size:28px;">Бюджеты</div>
-        <div style="font-size:14px;color:#8e8e93;margin-top:2px;">Месячные лимиты по категориям</div>
+        <div style="font-size:14px;color:#8a8178;margin-top:2px;">Месячные лимиты по категориям</div>
       </div>
-      <button onclick="toggleAddBudget()" style="border-radius:50%;width:44px;height:44px;padding:0;font-size:24px;display:flex;align-items:center;justify-content:center;margin-top:4px;box-shadow:0 4px 14px rgba(45,106,79,0.25);flex-shrink:0;border:none;cursor:pointer;background:${addBudgetOpen?'#E88D67':'#1a4a35'};color:#fff;transition:background .2s;">${addBudgetOpen?'✕':'+'}</button>
+      <button onclick="toggleAddBudget()" aria-label="${addBudgetOpen?'Закрыть':'Добавить бюджет'}" style="border-radius:50%;width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;margin-top:4px;box-shadow:0 4px 14px rgba(45,106,79,0.25);flex-shrink:0;border:none;cursor:pointer;background:${addBudgetOpen?'#c0563a':'#1a4a35'};color:#fff;transition:background .2s;"><svg width="20" height="20"><use href="#ico-${addBudgetOpen?'close':'plus'}"/></svg></button>
     </div>
 
     <!-- Add budget form (shown when addBudgetOpen) -->
     ${addBudgetOpen?`
-    <div style="background:#fff;border-radius:20px;padding:20px;border:1.5px solid #f2f2f7;">
+    <div style="background:#fff;border-radius:20px;padding:20px;border:1.5px solid #f1ece2;">
       <div class="lbl">Категория</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
         ${ECATS.map(c=>{
           const color=(CATEGORY_META[c]||{color:"#1a4a35"}).color;
           const sel=budgetSelCat===c;
-          return `<button onclick="selBudgetCat('${c}')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:50px;border:1.5px solid ${sel?color:'#e8e8e8'};background:${sel?color+'18':'#fff'};color:${sel?color:'#1a1a1a'};font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;transform:${sel?'scale(1.04)':'scale(1)'}">${catIcon(c,14)}${c}</button>`;
+          return `<button onclick="selBudgetCat('${c}')" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:50px;border:1.5px solid ${sel?color:'#e8e1d4'};background:${sel?color+'18':'#fff'};color:${sel?color:'#1a1a1a'};font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;transform:${sel?'scale(1.04)':'scale(1)'}">${catIcon(c,14)}${c}</button>`;
         }).join("")}
       </div>
       <div class="lbl">Месячный лимит, ₪</div>
-      <input id="budget-limit-inp" type="number" placeholder="5000" value="${budgetLimitVal||""}" style="width:100%;border:1.5px solid #e8e8e8;border-radius:14px;padding:14px 16px;font-family:inherit;font-size:18px;outline:none;background:#fff;margin-bottom:18px;">
+      <input id="budget-limit-inp" type="number" placeholder="5000" value="${budgetLimitVal||""}" style="width:100%;border:1.5px solid #e8e1d4;border-radius:14px;padding:14px 16px;font-family:inherit;font-size:18px;outline:none;background:#fff;margin-bottom:18px;">
       <button onclick="saveBudgetNew()" class="btn-g" style="width:100%;padding:15px;font-size:16px;border-radius:50px;">Сохранить</button>
     </div>`:""}
 
     <!-- Budget cards -->
     ${budgetList.length===0?`
-    <div style="background:#fff;border-radius:20px;padding:48px 24px;text-align:center;border:1.5px solid #f2f2f7;">
-      <div style="margin-bottom:16px;"><svg width="52" height="52" color="#c7c7cc"><use href="#ico-target"/></svg></div>
+    <div style="background:#fff;border-radius:20px;padding:48px 24px;text-align:center;border:1.5px solid #f1ece2;">
+      <div style="margin-bottom:16px;"><svg width="52" height="52" color="#bdb3a4"><use href="#ico-target"/></svg></div>
       <div style="font-weight:700;font-size:20px;margin-bottom:8px;">Установите цель</div>
-      <div style="color:#8e8e93;font-size:14px;line-height:1.5;">Добавьте первый бюджет — и следите за лимитами</div>
+      <div style="color:#8a8178;font-size:14px;line-height:1.5;">Добавьте первый бюджет — и следите за лимитами</div>
     </div>`:
     budgetList.map(([cat,lim])=>{
       const spent=txs.filter(t=>t.type==="expense"&&t.cat===cat&&new Date(t.date).getMonth()===now.getMonth()&&new Date(t.date).getFullYear()===now.getFullYear()).reduce((s,t)=>s+t.amount,0);
       const p=Math.min(100,Math.round(spent/lim*100));
       const over=spent>lim;
       const color=(CATEGORY_META[cat]||{color:"#888"}).color;
-      return `<div style="background:#fff;border-radius:20px;padding:16px 18px;border:1.5px solid #f2f2f7;">
+      return `<div style="background:#fff;border-radius:20px;padding:16px 18px;border:1.5px solid #f1ece2;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
           ${catTile(cat,24,48)}
           <div style="flex:1;">
             <div style="font-weight:700;font-size:16px;">${cat}</div>
-            <div style="font-size:13px;color:#8e8e93;margin-top:2px;">${fmt(spent)} ₪ / ${fmt(lim)} ₪</div>
+            <div style="font-size:13px;color:#8a8178;margin-top:2px;">${fmt(spent)} ₪ / ${fmt(lim)} ₪</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:${over?"#E88D67":"#aaa"};margin-right:8px;">${p}%</div>
+          <div style="font-size:16px;font-weight:700;color:${over?"#c0563a":"#aaa"};margin-right:8px;">${p}%</div>
           <button onclick="delBudget('${cat}')" style="width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.06);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;" onmousedown="this.style.background='rgba(0,0,0,0.12)'" onmouseup="this.style.background='rgba(0,0,0,0.06)'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
           </button>
         </div>
-        <div style="background:#f2f2f7;border-radius:6px;height:8px;">
-          <div style="background:${over?"#E88D67":color};height:8px;border-radius:6px;width:${p}%;transition:width .5s;"></div>
+        <div style="background:#f1ece2;border-radius:6px;height:8px;">
+          <div style="background:${over?"#c0563a":color};height:8px;border-radius:6px;width:${p}%;transition:width .5s;"></div>
         </div>
       </div>`;}).join("")}`;
   }
@@ -2690,17 +2700,17 @@ function render(){
 
     h=`
     <!-- Search bar -->
-    <div style="background:#f2f2f7;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:10px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="histSearchInp" type="text" value="${histSearch}" oninput="setHistSearch(this.value)" placeholder="Поиск" style="flex:1;border:none;outline:none;font-family:inherit;font-size:16px;background:transparent;color:#1c1c1e;">
+    <div style="background:#f1ece2;border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:10px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a8178" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="histSearchInp" type="text" value="${histSearch}" oninput="setHistSearch(this.value)" placeholder="Поиск" style="flex:1;border:none;outline:none;font-family:inherit;font-size:16px;background:transparent;color:#221f1a;">
     </div>
 
     <!-- Period pill -->
     <div style="display:flex;gap:8px;align-items:center;">
       ${histPeriod==="all" ? `
-      <button onclick="openCal()" style="display:flex;align-items:center;gap:7px;background:#f2f2f7;border:none;border-radius:50px;padding:0 16px;height:38px;cursor:pointer;font-family:'Manrope',sans-serif;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        <span style="font-size:14px;font-weight:500;color:#8e8e93;">Все операции</span>
+      <button onclick="openCal()" style="display:flex;align-items:center;gap:7px;background:#f1ece2;border:none;border-radius:50px;padding:0 16px;height:38px;cursor:pointer;font-family:'Manrope',sans-serif;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8178" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span style="font-size:14px;font-weight:500;color:#8a8178;">Все операции</span>
       </button>
       ` : `
       <div style="display:flex;align-items:center;background:#1a4a35;border-radius:50px;height:38px;overflow:hidden;">
@@ -2708,7 +2718,7 @@ function render(){
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
           <span style="font-size:14px;font-weight:600;color:#fff;">${periodLabel}</span>
         </button>
-        <button onclick="histPeriod='all';window._calEnd=null;render()" style="width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:4px;font-weight:600;">✕</button>
+        <button onclick="histPeriod='all';window._calEnd=null;render()" style="width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,0.2);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:4px;font-weight:600;"><svg width="16" height="16"><use href="#ico-close"/></svg></button>
       </div>
       `}
     </div>
@@ -2721,10 +2731,10 @@ function render(){
         const expCats=Object.entries(expByCat).sort((a,b)=>b[1]-a[1]);
         const expTotal=expCats.reduce((s,[,v])=>s+v,0)||1;
         return `<div class="card" style="padding:16px 18px 14px;cursor:pointer;" onclick="openHistDetail('exp')">
-          <div class="font-display" style="font-size:20px;font-weight:600;color:#E88D67;">${fmt(hExp)} ₪</div>
-          <div class="font-tiny" style="color:#8e8e93;margin-top:2px;margin-bottom:12px;">Траты</div>
-          <div style="height:8px;border-radius:6px;background:#f2f2f7;overflow:hidden;display:flex;gap:2px;">
-            ${expCats.length>0?expCats.map(([cat,val])=>`<div style="flex:${Math.round(val/expTotal*100)};background:${(CATEGORY_META[cat]||{color:"#ccc"}).color};height:100%;border-radius:4px;"></div>`).join(""):`<div style="flex:1;background:#e8e8e8;height:100%;border-radius:4px;"></div>`}
+          <div class="font-display" style="font-size:20px;font-weight:600;color:#c0563a;">${fmt(hExp)} ₪</div>
+          <div class="font-tiny" style="color:#8a8178;margin-top:2px;margin-bottom:12px;">Траты</div>
+          <div style="height:8px;border-radius:6px;background:#f1ece2;overflow:hidden;display:flex;gap:2px;">
+            ${expCats.length>0?expCats.map(([cat,val])=>`<div style="flex:${Math.round(val/expTotal*100)};background:${(CATEGORY_META[cat]||{color:"#ccc"}).color};height:100%;border-radius:4px;"></div>`).join(""):`<div style="flex:1;background:#e8e1d4;height:100%;border-radius:4px;"></div>`}
           </div>
         </div>`;
       })()}
@@ -2735,9 +2745,9 @@ function render(){
         const incTotal=incCats.reduce((s,[,v])=>s+v,0)||1;
         return `<div class="card" style="padding:16px 18px 14px;cursor:pointer;" onclick="openHistDetail('inc')">
           <div class="font-display" style="font-size:20px;font-weight:600;color:#1a4a35;">+${fmt(hInc)} ₪</div>
-          <div class="font-tiny" style="color:#8e8e93;margin-top:2px;margin-bottom:12px;">Доходы</div>
-          <div style="height:8px;border-radius:6px;background:#f2f2f7;overflow:hidden;display:flex;gap:2px;">
-            ${incCats.length>0?incCats.map(([cat,val])=>`<div style="flex:${Math.round(val/incTotal*100)};background:${(CATEGORY_META[cat]||{color:"#1a4a35"}).color};height:100%;border-radius:4px;"></div>`).join(""):`<div style="flex:1;background:#e8e8e8;height:100%;border-radius:4px;"></div>`}
+          <div class="font-tiny" style="color:#8a8178;margin-top:2px;margin-bottom:12px;">Доходы</div>
+          <div style="height:8px;border-radius:6px;background:#f1ece2;overflow:hidden;display:flex;gap:2px;">
+            ${incCats.length>0?incCats.map(([cat,val])=>`<div style="flex:${Math.round(val/incTotal*100)};background:${(CATEGORY_META[cat]||{color:"#1a4a35"}).color};height:100%;border-radius:4px;"></div>`).join(""):`<div style="flex:1;background:#e8e1d4;height:100%;border-radius:4px;"></div>`}
           </div>
         </div>`;
       })()}
@@ -2746,9 +2756,9 @@ function render(){
     <!-- Transactions grouped by date -->
     ${Object.keys(groups).length===0?`
     <div class="card" style="text-align:center;padding:48px 24px;">
-      <div style="margin-bottom:14px;"><svg width="52" height="52" color="#c7c7cc"><use href="#ico-sprout"/></svg></div>
+      <div style="margin-bottom:14px;"><svg width="52" height="52" color="#bdb3a4"><use href="#ico-sprout"/></svg></div>
       <div class="font-display font-semibold" style="font-size:18px;margin-bottom:6px;">Ничего не найдено</div>
-      <div style="color:#8e8e93;font-size:14px;">В выбранный период операций нет</div>
+      <div style="color:#8a8178;font-size:14px;">В выбранный период операций нет</div>
     </div>`:Object.entries(groups).map(([date,items])=>{
       const dTotal=dayTotal(items);
       const d2=new Date(date+"T12:00:00");
@@ -2756,8 +2766,8 @@ function render(){
       return `
       <div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 2px 10px;">
-          <div style="font-size:17px;font-weight:700;color:#1c1c1e;">${dayLabel}</div>
-          <div style="font-size:14px;font-weight:600;color:${dTotal>=0?"#1a4a35":"#8e8e93"};">${dTotal>=0?"+":"−"}${fmt(Math.abs(dTotal))} ₪</div>
+          <div style="font-size:17px;font-weight:700;color:#221f1a;">${dayLabel}</div>
+          <div style="font-size:14px;font-weight:600;color:${dTotal>=0?"#1a4a35":"#8a8178"};">${dTotal>=0?"+":"−"}${fmt(Math.abs(dTotal))} ₪</div>
         </div>
         <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);">
           ${items.map((t,i)=>`
@@ -2770,10 +2780,10 @@ function render(){
             <div class="swipe-content" style="display:flex;align-items:center;padding:14px 16px;border-bottom:none;">
               <div style="margin-right:14px;">${catTile(t.cat,22,44)}</div>
               <div style="flex:1;min-width:0;">
-                <div style="font-weight:600;font-size:15px;color:#1c1c1e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.note||t.cat}</div>
-                <div style="font-size:13px;color:#8e8e93;margin-top:2px;">${t.cat}</div>
+                <div style="font-weight:600;font-size:15px;color:#221f1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.note||t.cat}</div>
+                <div style="font-size:13px;color:#8a8178;margin-top:2px;">${t.cat}</div>
               </div>
-              <div style="font-weight:700;font-size:16px;color:${t.type==="income"?"#1a4a35":"#E88D67"};flex-shrink:0;margin-left:8px;">${t.type==="income"?"+":"−"}${fmt(t.amount)} ₪</div>
+              <div style="font-weight:700;font-size:16px;color:${t.type==="income"?"#1a4a35":"#c0563a"};flex-shrink:0;margin-left:8px;">${t.type==="income"?"+":"−"}${fmt(t.amount)} ₪</div>
             </div>
           </div>`).join("")}
         </div>
@@ -2821,6 +2831,7 @@ window.toast = function(msg){
 <script src="js/home/tasks.js"></script>
 <script src="js/home/recipes.js"></script>
 <script src="js/motion.js"></script>
+<script src="js/sheet-swipe.js"></script>
 </div><!-- end app-root -->
 </body>
 </html>

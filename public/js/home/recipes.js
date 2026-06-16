@@ -27,6 +27,7 @@
   let openId = null;       // открытый детальный рецепт
   let editId = null;
   const form = {};
+  const ui = (k, s, c) => (window.uiIcon ? window.uiIcon(k, s, c) : "");
 
   /* ── Данные ── */
   function H() { return (window.Household && window.Household.data) || {}; }
@@ -94,7 +95,7 @@
 
     const search_ = `
       <div class="rc-search anim">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <span class="rc-search__ico">${ui("search", 18)}</span>
         <input id="rc-search-input" placeholder="Поиск по названию или ингредиенту…"
           value="${escapeHtml(search)}" oninput="RecipesUI.search(this.value)">
       </div>`;
@@ -108,6 +109,20 @@
          </div>`;
 
     main.innerHTML = search_ + cats + body;
+    initCatsFade(main);
+  }
+
+  /* fade-края ленты категорий показываем только когда есть куда листать */
+  function initCatsFade(main) {
+    const el = main.querySelector(".rc-cats");
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      el.classList.toggle("can-left", el.scrollLeft > 4);
+      el.classList.toggle("can-right", el.scrollLeft < max - 4);
+    };
+    el.addEventListener("scroll", update, { passive: true });
+    requestAnimationFrame(update);
   }
 
   function catChip(id, name, icoKey) {
@@ -115,12 +130,7 @@
     const color = id === "all" ? "var(--home)"
       : id === "fav" ? "#c0563a"
       : (window.HOME_ICON_COLOR[icoKey] || "var(--home)");
-    const ico = id === "fav"
-      ? `<span style="font-size:13px;">❤</span>`
-      : (window.duoIcon ? window.duoIcon(icoKey, 17, on ? "#fff" : null) : "");
-    const dotBg = on ? "" : (id === "fav" ? "#fbeae4" : ((window.HOME_ICON_COLOR[icoKey] || "#b5613e") + "1a"));
-    return `<div class="rc-cat ${on ? "on" : ""}" style="${on ? `background:${color};` : ""}" onclick="RecipesUI.filter('${id}')">
-      <span class="dot" style="background:${dotBg};">${ico}</span>${name}</div>`;
+    return `<div class="rc-cat ${on ? "on" : ""}" style="${on ? `background:${color};` : ""}" onclick="RecipesUI.filter('${id}')">${name}</div>`;
   }
 
   function recipeCard(r) {
@@ -138,14 +148,14 @@
                <div class="rc-card__ph" style="display:none;">${catIconBig(r.cat)}</div>`
             : `<div class="rc-card__ph">${catIconBig(r.cat)}</div>`}
           <div class="rc-card__grad"></div>
-          <button class="rc-card__fav" onclick="event.stopPropagation();RecipesUI.toggleFav('${r.id}')">${r.fav ? "❤️" : "🤍"}</button>
-          ${(r.ingredients || []).length ? `<div class="rc-card__cook ${canCook ? "ok" : "miss"}">${canCook ? "✓ можно приготовить" : `⚠ нет ${missing.length}`}</div>` : ""}
+          <button class="rc-card__fav ${r.fav ? "on" : ""}" aria-label="${r.fav ? "Убрать из избранного" : "В избранное"}" onclick="event.stopPropagation();RecipesUI.toggleFav('${r.id}')">${ui(r.fav ? "heart-fill" : "heart", 19, "#fff")}</button>
+          ${(r.ingredients || []).length ? `<div class="rc-card__cook ${canCook ? "ok" : "miss"}">${canCook ? `${ui("check", 13, "#fff")}можно приготовить` : `${ui("warn", 13, "#fff")}нет ${missing.length}`}</div>` : ""}
           <div class="rc-card__title">
             <div class="rc-card__name">${escapeHtml(r.title)}</div>
             <div class="rc-card__meta">
               ${c.name ? `<span>${escapeHtml(c.name)}</span>` : ""}
-              ${r.time ? `<span>⏱ ${escapeHtml(String(r.time))} мин</span>` : ""}
-              ${r.servings ? `<span>🍽 ${escapeHtml(String(r.servings))} порц.</span>` : ""}
+              ${r.time ? `<span>${ui("clock", 13, "rgba(255,255,255,.9)")}${escapeHtml(String(r.time))} мин</span>` : ""}
+              ${r.servings ? `<span>${ui("serving", 13, "rgba(255,255,255,.9)")}${escapeHtml(String(r.servings))} порц.</span>` : ""}
             </div>
           </div>
         </div>
@@ -181,7 +191,7 @@
     main.innerHTML = `
       <div class="rc-detail">
         <div class="rc-detail__hero" style="--c1:${colors[0]};--c2:${colors[1]};">
-          <button class="rc-detail__back" onclick="RecipesUI.close()">←</button>
+          <button class="rc-detail__back" aria-label="Назад" onclick="RecipesUI.close()">${ui("arrow-left", 20, "#fff")}</button>
           ${photo
             ? `<img src="${escapeAttr(photo)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                <div class="rc-card__ph" style="display:none;">${catIconBig(r.cat)}</div>`
@@ -197,10 +207,11 @@
 
         ${ings.length ? `
         <div class="rc-cook-bar ${canCook ? "ok" : "miss"}">
+          ${canCook ? `<span class="rc-cook-bar__ico">${ui("check", 18)}</span>` : ""}
           <div class="rc-cook-bar__txt">
-            ${canCook ? "✓ Всё есть — можно готовить!" : `Не хватает: ${missing.map(m => escapeHtml(m.name)).join(", ")}`}
+            ${canCook ? "Всё есть — можно готовить!" : `Не хватает: ${missing.map(m => escapeHtml(m.name)).join(", ")}`}
           </div>
-          ${!canCook ? `<button class="rc-cook-bar__btn" onclick="RecipesUI.addMissing('${r.id}')">+ В покупки</button>` : ""}
+          ${!canCook ? `<button class="rc-cook-bar__btn" onclick="RecipesUI.addMissing('${r.id}')">${ui("plus", 15, "#fff")} В покупки</button>` : ""}
         </div>` : ""}
 
         ${ings.length ? `
@@ -321,12 +332,12 @@
 
       <div class="hub-field"><label>Ингредиенты</label>
         <div id="rf-ings">${ingRows()}</div>
-        <button class="rc-add-line" onclick="RecipesUI.addIng()">+ ингредиент</button>
+        <button class="rc-add-line" onclick="RecipesUI.addIng()">${ui("plus", 16)} ингредиент</button>
       </div>
 
       <div class="hub-field"><label>Шаги приготовления</label>
         <div id="rf-steps">${stepRows()}</div>
-        <button class="rc-add-line" onclick="RecipesUI.addStep()">+ шаг</button>
+        <button class="rc-add-line" onclick="RecipesUI.addStep()">${ui("plus", 16)} шаг</button>
       </div>
 
       <button class="hub-btn-primary" onclick="RecipesUI.save()">${editId ? "Сохранить" : "Добавить рецепт"}</button>
@@ -353,14 +364,14 @@
       <div class="rc-ing-edit">
         <input class="hub-input name" placeholder="Ингредиент" value="${escapeAttr(ing.name)}" oninput="RecipesUI.setIng(${i},'name',this.value)">
         <input class="hub-input qty" placeholder="100 г" value="${escapeAttr(ing.qty)}" oninput="RecipesUI.setIng(${i},'qty',this.value)">
-        <button onclick="RecipesUI.delIng(${i})">×</button>
+        <button aria-label="Удалить" onclick="RecipesUI.delIng(${i})">${ui("close", 16)}</button>
       </div>`).join("");
   }
   function stepRows() {
     return form.steps.map((s, i) => `
       <div class="rc-ing-edit">
         <input class="hub-input name" placeholder="Шаг ${i + 1}" value="${escapeAttr(s)}" oninput="RecipesUI.setStep(${i},this.value)">
-        <button onclick="RecipesUI.delStep(${i})">×</button>
+        <button aria-label="Удалить" onclick="RecipesUI.delStep(${i})">${ui("close", 16)}</button>
       </div>`).join("");
   }
 

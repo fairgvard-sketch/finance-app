@@ -13,7 +13,7 @@
 
   function avatar(m, cls) {
     if (m.photo) return `<img class="${cls}" src="${esc(m.photo)}" alt="">`;
-    return `<div class="${cls}" style="background:${m.color || "#b5613e"};">${(m.name || "?").slice(0, 1).toUpperCase()}</div>`;
+    return `<div class="${cls}" style="background:${m.color || "#8a6fb0"};">${(m.name || "?").slice(0, 1).toUpperCase()}</div>`;
   }
 
   function open() {

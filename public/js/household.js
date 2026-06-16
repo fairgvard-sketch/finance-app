@@ -13,7 +13,7 @@
   "use strict";
 
   // Палитра цветов партнёров (контрастные, тёплые)
-  const MEMBER_COLORS = ["#2f6a4c", "#b5613e", "#4f86c4", "#9b72cf"];
+  const MEMBER_COLORS = ["#2f6a4c", "#8a6fb0", "#4f86c4", "#9b72cf"];
 
   const Household = {
     id: null,

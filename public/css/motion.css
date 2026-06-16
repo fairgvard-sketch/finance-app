@@ -103,7 +103,9 @@
 
 /* toast — приятный въезд */
 #hub-toast { animation: none; }
-#hub-toast.m-show { animation: m-toastin .3s cubic-bezier(.34,1.4,.5,1) both; }
+/* только въезд; конечное состояние НЕ фиксируем (иначе тост зависает видимым —
+   базовый toast() прячет его через inline opacity/transition) */
+#hub-toast.m-show { animation: m-toastin .3s cubic-bezier(.34,1.4,.5,1); }
 
 /* ============================================================
    6. УВАЖЕНИЕ К prefers-reduced-motion — выключаем всё

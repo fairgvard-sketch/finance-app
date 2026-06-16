@@ -13,6 +13,7 @@
 
   // ключи duotone-иконок из icons.js (HOME_ICONS) — НЕ эмодзи
   const CHORE_ICONS = ["dishes","trash","broom","laundry","cook","cart","plant","pet","bath","iron"];
+  const ui = (k, s, c) => (window.uiIcon ? window.uiIcon(k, s, c) : "");
 
   let editType = null;   // 'task' | 'chore'
   let editId = null;
@@ -26,14 +27,22 @@
 
   function save(section, obj) { if (window.saveHousehold) window.saveHousehold(section, obj); }
 
+  /* ── Цвета участников: я — синий, партнёр — розовый (по позиции) ── */
+  const ME_COLOR = "#3f86c4";       // синий
+  const PARTNER_COLOR = "#d56a9a";  // розовый
+
   /* ── Участники (с виртуальным партнёром, пока нет pairing) ── */
   function members() {
     const real = (window.Household && window.Household.members && window.Household.members()) || [];
-    if (real.length >= 2) return real.slice(0, 2);
-    // соло-режим: добавляем виртуального «Партнёра» для демонстрации очереди
-    const me = real[0] || { uid: "me", name: "Я", photo: "", color: "#2f6a4c" };
-    const partner = { uid: "partner", name: "Партнёр", photo: "", color: "#b5613e" };
-    return [me, partner];
+    let list;
+    if (real.length >= 2) list = real.slice(0, 2);
+    else {
+      const me = real[0] || { uid: "me", name: "Я", photo: "" };
+      const partner = { uid: "partner", name: "Партнёр", photo: "" };
+      list = [me, partner];
+    }
+    // фиксированная цветовая метка по позиции: [0]=я (синий), [1]=партнёр (розовый)
+    return list.map((m, i) => ({ ...m, color: i === 0 ? ME_COLOR : PARTNER_COLOR }));
   }
   function colorOf(uid) {
     const m = members().find(x => x.uid === uid);
@@ -92,8 +101,8 @@
     return `
       <div class="tsk-section anim">
         <div class="tsk-section__head">
-          <h2>🔁 Дежурства</h2>
-          <button class="tsk-section__add" onclick="TasksUI.add('chore')">+</button>
+          <h2><span class="tsk-section__ico" style="color:#c8852a;">${ui("rotate", 18)}</span>Дежурства</h2>
+          <button class="tsk-section__add" aria-label="Добавить дежурство" onclick="TasksUI.add('chore')">${ui("plus", 18, "#fff")}</button>
         </div>
         ${body}
       </div>`;
@@ -121,12 +130,15 @@
         <div class="tsk-chore__body">
           <div class="tsk-chore__title">${escapeHtml(c.title)}</div>
           <div class="tsk-chore__turn">
-            <span class="tsk-chore__dot" style="background:${col};">${nameOf(curUid).slice(0,1).toUpperCase()}</span>
-            ${mine ? "<b>твоя очередь</b>" : `очередь ${escapeHtml(nameOf(curUid))}`}
+            ${avatarHtml(curUid, "tsk-chore__dot")}
+            ${mine ? "<b>твоя очередь</b>" : `очередь <b>${escapeHtml(nameOf(curUid))}</b>`}
           </div>
-          <div class="tsk-chore__when">${c.lastDone ? `делали ${fmtAgo(c.lastDone)} · далее ${escapeHtml(nameOf(nextUid))}` : `далее ${escapeHtml(nameOf(nextUid))}`}</div>
+          <div class="tsk-chore__when">
+            ${c.lastDone ? `делали ${fmtAgo(c.lastDone)} · ` : ""}далее
+            <span class="tsk-chore__next" style="--nc:${colorOf(nextUid)};">${escapeHtml(nameOf(nextUid))}</span>
+          </div>
         </div>
-        <button class="tsk-chore__done" onclick="event.stopPropagation();TasksUI.doneChore('${c.id}')">✓ Сделал</button>
+        <button class="tsk-chore__done" onclick="event.stopPropagation();TasksUI.doneChore('${c.id}')">${ui("check", 16, "#fff")}<span>Сделал</span></button>
       </div>`;
   }
 
@@ -138,8 +150,8 @@
     return `
       <div class="tsk-section anim">
         <div class="tsk-section__head">
-          <h2>📋 Задачи</h2>
-          <button class="tsk-section__add" onclick="TasksUI.add('task')">+</button>
+          <h2><span class="tsk-section__ico" style="color:#2f6a4c;">${ui("clipboard", 18)}</span>Задачи</h2>
+          <button class="tsk-section__add" aria-label="Добавить задачу" onclick="TasksUI.add('task')">${ui("plus", 18, "#fff")}</button>
         </div>
         ${rows}
       </div>`;
@@ -158,9 +170,10 @@
           <div class="tsk-row__title">${escapeHtml(t.title)}</div>
           <div class="tsk-row__meta">
             ${t.assignee ? `<span class="tsk-who"><span class="tsk-who__dot" style="background:${col};"></span>${escapeHtml(nameOf(t.assignee))}</span>` : ""}
-            ${due ? `<span class="tsk-badge ${due.cls}">⏱ ${due.txt}</span>` : ""}
+            ${due ? `<span class="tsk-badge ${due.cls}">${ui("clock", 12)}${due.txt}</span>` : ""}
           </div>
         </div>
+        <span class="tsk-row__chev">${ui("chevron", 18)}</span>
       </div>`;
   }
 

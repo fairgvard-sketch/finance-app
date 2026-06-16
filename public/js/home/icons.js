@@ -19,7 +19,7 @@
       `<g opacity=".2"><rect x="3" y="3" width="7" height="7" rx="2" fill="C"/><rect x="14" y="3" width="7" height="7" rx="2" fill="C"/><rect x="3" y="14" width="7" height="7" rx="2" fill="C"/><rect x="14" y="14" width="7" height="7" rx="2" fill="C"/></g>`+
       `<rect x="3" y="3" width="7" height="7" rx="2" stroke="C" stroke-width="1.6" fill="none"/><rect x="14" y="3" width="7" height="7" rx="2" stroke="C" stroke-width="1.6" fill="none"/><rect x="3" y="14" width="7" height="7" rx="2" stroke="C" stroke-width="1.6" fill="none"/><rect x="14" y="14" width="7" height="7" rx="2" stroke="C" stroke-width="1.6" fill="none"/>` },
 
-    stock: { color: "#b5613e", svg:  // корзина / запасы
+    stock: { color: "#8a6fb0", svg:  // корзина / запасы
       `<g opacity=".2"><path d="M4 8h16l-1.2 11.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8L4 8z" fill="C"/></g>`+
       `<path d="M4 8h16l-1.2 11.2a2 2 0 0 1-2 1.8H7.2a2 2 0 0 1-2-1.8L4 8z" stroke="C" stroke-width="1.6" stroke-linejoin="round" fill="none"/>`+
       `<path d="M8.5 8 12 3l3.5 5M9 12v5M15 12v5M12 12v5" stroke="C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` },
@@ -56,7 +56,7 @@
       `<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" stroke="C" stroke-width="1.6" stroke-linecap="round" fill="none"/>`+
       `<path d="M12 3l-2 2.2M12 3l2 2.2M12 21l-2-2.2M12 21l2-2.2M4.2 7.5l.2 3M19.8 16.5l-.2-3M19.8 7.5l-.2 3M4.2 16.5l.2-3" stroke="C" stroke-width="1.5" stroke-linecap="round" fill="none"/>` },
 
-    pantry: { color: "#b5613e", svg:  // банка / шкаф-кухня
+    pantry: { color: "#8a6fb0", svg:  // банка / шкаф-кухня
       `<g opacity=".2"><rect x="6" y="6" width="12" height="15" rx="2.5" fill="C"/></g>`+
       `<rect x="6" y="6" width="12" height="15" rx="2.5" stroke="C" stroke-width="1.6" fill="none"/>`+
       `<path d="M8 3.5h8a1 1 0 0 1 1 1V6H7V4.5a1 1 0 0 1 1-1z" stroke="C" stroke-width="1.6" stroke-linejoin="round" fill="none"/>`+
@@ -109,7 +109,7 @@
       `<path d="M7 12h10l-1 9H8z" stroke="C" stroke-width="1.6" stroke-linejoin="round" fill="none"/>`+
       `<path d="M12 12c0-3 2-5 5-5 0 3-2 5-5 5zM12 12c0-2.5-1.6-4-4-4 0 2.5 1.6 4 4 4z" stroke="C" stroke-width="1.5" stroke-linejoin="round" fill="none"/>` },
 
-    pet: { color: "#b5613e", svg:  // лапка / питомец
+    pet: { color: "#8a6fb0", svg:  // лапка / питомец
       `<g opacity=".2"><circle cx="12" cy="15" r="4.5" fill="C"/></g>`+
       `<ellipse cx="12" cy="15.5" rx="4" ry="3.4" stroke="C" stroke-width="1.5" fill="none"/>`+
       `<circle cx="7.5" cy="10.5" r="1.6" stroke="C" stroke-width="1.4" fill="none"/>`+
@@ -169,6 +169,37 @@
       `<path d="M12.5 11.5 19 18a1.8 1.8 0 0 1-2.5 2.5L10 14" stroke="C" stroke-width="1.6" stroke-linecap="round" fill="none"/>` }
   };
 
+  /* ── UI-глифы (управляющие, без duotone-заливки): стрелки, плюс,
+        галочки, часы и т.п. Один контур, stroke="C", тот же визуальный
+        язык. Используются вместо голых символов ←／＋／×／✓. ── */
+  const UI_GLYPHS = {
+    "arrow-left":  `<path d="M15 5l-7 7 7 7" stroke="C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "chevron":     `<path d="M9 6l6 6-6 6" stroke="C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "plus":        `<path d="M12 5v14M5 12h14" stroke="C" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+    "minus":       `<path d="M5 12h14" stroke="C" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+    "close":       `<path d="M6 6l12 12M18 6L6 18" stroke="C" stroke-width="2" stroke-linecap="round" fill="none"/>`,
+    "check":       `<path d="M5 12.5l4.5 4.5L19 7" stroke="C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "clock":       `<circle cx="12" cy="12" r="8" stroke="C" stroke-width="1.7" fill="none"/><path d="M12 8v4.3l2.8 1.7" stroke="C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "warn":        `<path d="M12 4.5 21 19.5H3z" stroke="C" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="M12 10v4M12 16.6v.1" stroke="C" stroke-width="1.8" stroke-linecap="round" fill="none"/>`,
+    "serving":     `<path d="M4 13h16a8 8 0 0 0-16 0zM3 13h18M11 5.5V4" stroke="C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "search":      `<circle cx="11" cy="11" r="7" stroke="C" stroke-width="1.8" fill="none"/><path d="M16.3 16.3 21 21" stroke="C" stroke-width="1.8" stroke-linecap="round" fill="none"/>`,
+    "heart":       `<path d="M12 20s-7-4.4-7-9.3A4 4 0 0 1 12 7.5 4 4 0 0 1 19 10.7C19 15.6 12 20 12 20z" stroke="C" stroke-width="1.8" stroke-linejoin="round" fill="none"/>`,
+    "heart-fill":  `<path d="M12 20s-7-4.4-7-9.3A4 4 0 0 1 12 7.5 4 4 0 0 1 19 10.7C19 15.6 12 20 12 20z" fill="C"/>`,
+    "rotate":      `<path d="M20 9a8 8 0 0 0-14-3L3 9M4 15a8 8 0 0 0 14 3l3-3" stroke="C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M3 5v4h4M21 19v-4h-4" stroke="C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`,
+    "clipboard":   `<rect x="6" y="4.5" width="12" height="16" rx="2.5" stroke="C" stroke-width="1.7" fill="none"/><path d="M9 4.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 4.5V6H9z" stroke="C" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="M9 11h6M9 15h4" stroke="C" stroke-width="1.7" stroke-linecap="round" fill="none"/>`,
+    "leaf":        `<g opacity=".2"><path d="M5 19C5 11 11 5 19 5c0 8-6 14-14 14z" fill="C"/></g><path d="M5 19C5 11 11 5 19 5c0 8-6 14-14 14zM8 16c2.5-3 5.5-5 8.5-6.5" stroke="C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>`
+  };
+
+  // uiIcon(key, size, color) — контурный управляющий глиф (по умолчанию currentColor)
+  function uiIcon(key, size, color) {
+    size = size || 20;
+    const g = UI_GLYPHS[key];
+    if (!g) return "";
+    const col = color || "currentColor";
+    const paths = g.replace(/stroke="C"/g, `stroke="${col}"`).replace(/fill="C"/g, `fill="${col}"`);
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:block;">${paths}</svg>`;
+  }
+
   // duoIcon(key, size, colorOverride?) — colorOverride перекрашивает иконку
   function duoIcon(key, size, colorOverride) {
     size = size || 24;
@@ -182,14 +213,16 @@
   function duoTile(key, size, tileSize, colorOverride) {
     size = size || 24; tileSize = tileSize || 46;
     const m = HOME_ICONS[key];
-    const col = colorOverride || (m ? m.color : "#b5613e");
+    const col = colorOverride || (m ? m.color : "#8a6fb0");
     const bg = col + "1a";                            // ~10% того же цвета
     const r = Math.round(tileSize * 0.30);
     return `<div style="width:${tileSize}px;height:${tileSize}px;border-radius:${r}px;background:${bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${duoIcon(key, size, colorOverride)}</div>`;
   }
 
   window.HOME_ICONS = HOME_ICONS;
+  window.UI_GLYPHS = UI_GLYPHS;
   window.HOME_ICON_COLOR = Object.fromEntries(Object.entries(HOME_ICONS).map(([k, v]) => [k, v.color]));
   window.duoIcon = duoIcon;
   window.duoTile = duoTile;
+  window.uiIcon = uiIcon;
 })();

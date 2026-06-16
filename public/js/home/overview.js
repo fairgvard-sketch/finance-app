@@ -39,18 +39,6 @@
     const s = summary();
 
     main.innerHTML = `
-      <div class="card anim" style="background:var(--home-grad);color:#fff;border:none;">
-        <div class="font-tiny" style="color:rgba(255,255,255,.7);">Сегодня дома</div>
-        <div class="font-display" style="font-size:24px;font-weight:700;margin-top:6px;line-height:1.25;">
-          ${greeting()}
-        </div>
-        <div style="font-size:13.5px;color:rgba(255,255,255,.85);margin-top:8px;line-height:1.5;">
-          ${s.openTasks > 0
-            ? `Открытых дел: <b>${s.openTasks}</b>`
-            : "Дел на сегодня нет — чисто 🌿"}${s.low > 0 ? ` · Заканчивается: <b>${s.low}</b>` : ""}
-        </div>
-      </div>
-
       <div class="widget-grid">
         ${widget({
           tab: "stock", icon: "stock", title: "Запасы",
@@ -72,24 +60,16 @@
 
       <div class="card anim">
         <div class="section-head"><h2>Очередь дел</h2></div>
-        <div style="display:flex;align-items:center;gap:12px;padding:6px 2px;">
+        <button type="button" class="ov-rowlink" onclick="goTab('tasks')" aria-label="Открыть раздел «Дела»">
           ${window.duoTile ? window.duoTile("queue", 22, 42) : ""}
-          <div style="flex:1;">
+          <div style="flex:1;min-width:0;text-align:left;">
             <div class="font-semibold" style="font-size:14px;">Чья сейчас очередь</div>
             <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px;">Мытьё посуды, уборка — настроится в разделе «Дела»</div>
           </div>
-          <svg width="18" height="18" style="color:var(--ink-3);" onclick="goTab('tasks')"><use href="#ico-chevron-right"/></svg>
-        </div>
+          <svg width="18" height="18" style="color:var(--ink-3);flex-shrink:0;"><use href="#ico-chevron-right"/></svg>
+        </button>
       </div>
     `;
-  }
-
-  function greeting() {
-    const h = new Date().getHours();
-    if (h < 6)  return "Доброй ночи 🌙";
-    if (h < 12) return "Доброе утро ☀️";
-    if (h < 18) return "Добрый день 🌿";
-    return "Добрый вечер 🌆";
   }
 
   function onAdd() {

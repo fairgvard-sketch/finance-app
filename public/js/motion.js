@@ -38,7 +38,12 @@
     const wrapped = function (msg) {
       const r = orig.apply(this, arguments);
       const t = document.getElementById("hub-toast");
-      if (t) { t.classList.remove("m-show"); void t.offsetWidth; t.classList.add("m-show"); }
+      if (t) {
+        t.classList.remove("m-show"); void t.offsetWidth; t.classList.add("m-show");
+        // снять класс после въезда, чтобы он не мешал базовому скрытию
+        clearTimeout(t.__mShowTimer);
+        t.__mShowTimer = setTimeout(() => t.classList.remove("m-show"), 320);
+      }
       return r;
     };
     wrapped.__motionWrapped = true;
